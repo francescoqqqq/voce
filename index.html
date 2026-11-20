@@ -84,11 +84,12 @@ button{font:inherit;cursor:pointer}
 .seg button{border:0;background:transparent;color:var(--muted);padding:7px 16px;border-radius:8px;font-weight:500;font-size:14px}
 .seg button.on{background:var(--card2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 /* voice chips */
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{display:flex;align-items:center;gap:9px;flex:none;border:1px solid var(--line);background:var(--bg2);color:var(--ink);
   border-radius:999px;padding:5px 14px 5px 5px;font-weight:500;font-size:14px}
 .chip.on{border-color:var(--accent);background:var(--soft)}
-.chip.add{padding:5px 14px;color:var(--muted);border-style:dashed}
+.chip.add,.chip.more{padding:5px 14px;color:var(--muted);border-style:dashed}
+.chip.more{border-style:solid;color:var(--ink)}
 .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#10140f;flex:none}
 .av.lg{width:46px;height:46px;font-size:19px;border-radius:14px}
 /* tags */
@@ -358,11 +359,14 @@ function picchi(samples, n = 90) {
 async function picchiDi(blob) { try { const b = await decodifica(blob); return { p: picchi(b.getChannelData(0)), d: b.duration }; } catch { return { p: [], d: 0 }; } }
 
 // ---------- lettore audio ----------
-let inRiproduzione = null;
+let inRiproduzione = null; const tuttiAudio = new Set();
+function fermaTutto() { for (const a of tuttiAudio) { if (!a.isConnectedPlayer || !a.isConnectedPlayer()) { a.pause(); } } }
+function fermaOgniAudio() { for (const a of tuttiAudio) a.pause(); }
 function lettore(blob, opt = {}) {
   const el = document.createElement('div'); el.className = 'player' + (opt.sm ? ' sm' : '');
   el.innerHTML = `<button class="play" aria-label="Riproduci">${ICON.play}</button><canvas></canvas><span class="t">${fmt(opt.durata)}</span>`;
-  const [btn, cv, t] = el.children; const audio = new Audio(); audio.preload = 'none';
+  const [btn, cv, t] = el.children; const audio = new Audio(); audio.preload = 'none'; tuttiAudio.add(audio);
+  audio.isConnectedPlayer = () => el.isConnected;
   let url = null, P = opt.picchi || null, dur = opt.durata || 0, raf;
   const src = () => { if (!url) { url = URL.createObjectURL(blob); audio.src = url; } };
   function draw() {
@@ -384,7 +388,7 @@ function lettore(blob, opt = {}) {
     else audio.pause();
   };
   audio.onplay = () => { btn.innerHTML = ICON.pause; tick(); };
-  audio.onpause = () => { btn.innerHTML = ICON.play; cancelAnimationFrame(raf); draw(); };
+  audio.onpause = () => { btn.innerHTML = ICON.play; cancelAnimationFrame(raf); draw(); if (!el.isConnected) { tuttiAudio.delete(audio); if (url) URL.revokeObjectURL(url); } };
   audio.onended = () => { audio.currentTime = 0; t.textContent = fmt(dur); draw(); };
   audio.onloadedmetadata = () => { if (isFinite(audio.duration)) { dur = audio.duration; if (audio.paused) t.textContent = fmt(dur); } };
   cv.onclick = e => { src(); const r = cv.getBoundingClientRect(); const go = () => { audio.currentTime = (e.clientX - r.left) / r.width * dur; draw(); };
@@ -399,7 +403,7 @@ function lettore(blob, opt = {}) {
 function vai(v) {
   document.querySelectorAll('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
-  ls.set('vista', v); if (v === 'nuova') setTimeout(() => $('nvNome').focus(), 50);
+  fermaOgniAudio(); ls.set('vista', v); if (v === 'nuova') setTimeout(() => $('nvNome').focus(), 50);
   window.scrollTo({ top: 0 });
 }
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => vai(b.dataset.v));
@@ -445,7 +449,7 @@ async function tts(text, references) {
 }
 
 // ---------- voci ----------
-let voci = [], scelta = ls.get('voce.scelta', '');
+let voci = [], scelta = ls.get('voce.scelta', ''), chipsAperte = false;
 async function caricaVoci() {
   voci = (await DB.all('voci')).sort((a, b) => a.creata - b.creata);
   if (!voci.some(v => v.id === scelta)) scelta = '';
@@ -458,11 +462,17 @@ function disegnaChips() {
   const chip = (id, html) => { const b = document.createElement('button'); b.className = 'chip' + (scelta === id ? ' on' : ''); b.innerHTML = html;
     b.onclick = () => { scelta = id; ls.set('voce.scelta', id); disegnaChips(); }; c.append(b); };
   chip('', `<span class="av" style="background:var(--card2);color:var(--muted)">?</span>Casuale`);
-  voci.forEach(v => chip(v.id, avatar(v.nome) + esc(v.nome)));
+  const LIM = 7, tante = voci.length > LIM + 1;
+  let visibili = voci;
+  if (tante && !chipsAperte) { visibili = voci.slice(0, LIM); const sel = voci.find(v => v.id === scelta); if (sel && !visibili.includes(sel)) visibili = [...visibili, sel]; }
+  visibili.forEach(v => chip(v.id, avatar(v.nome) + esc(v.nome)));
+  if (tante) { const m = document.createElement('button'); m.className = 'chip more';
+    m.textContent = chipsAperte ? 'Mostra meno' : `+${voci.length - visibili.length} altre`;
+    m.onclick = () => { chipsAperte = !chipsAperte; disegnaChips(); }; c.append(m); }
   const add = document.createElement('button'); add.className = 'chip add'; add.textContent = '+ Nuova voce'; add.dataset.go = 'nuova'; c.append(add);
 }
 function disegnaVoci() {
-  const L = $('listaVoci'); L.innerHTML = '';
+  const L = $('listaVoci'); L.innerHTML = ''; fermaTutto();
   if (!voci.length) { L.innerHTML = `<div class="card empty" style="grid-column:1/-1"><div class="big">Ancora nessuna voce</div>Aggiungi un audio di 20-30 secondi e il modello imparerà a imitarlo.<div style="margin-top:16px"><button class="btn primary" data-go="nuova">+ Aggiungi la prima voce</button></div></div>`; return; }
   for (const v of voci) {
     const d = document.createElement('div'); d.className = 'vcard';
@@ -492,7 +502,7 @@ async function aggiungiClip(blob, nome) {
 }
 function durataTot() { return clips.reduce((n, c) => n + c.durata, 0) + Math.max(0, clips.length - 1) * 0.3; }
 function disegnaClips() {
-  const C = $('clips'); C.innerHTML = '';
+  const C = $('clips'); C.innerHTML = ''; fermaTutto();
   clips.forEach((c, i) => {
     const d = document.createElement('div'); d.className = 'clip';
     d.innerHTML = `<div class="row"><span class="n">${i + 1}. ${esc(c.nome)} · ${fmt(c.durata)}</span><span class="grow"></span></div>`;
@@ -638,18 +648,18 @@ $('ferma').onclick = () => controller && controller.abort();
 function nomeFile(v) { return `voce_${new Date(v.data).toISOString().slice(0, 16).replace(/[-:T]/g, '')}_${v.testo.slice(0, 24).replace(/[^\p{L}\p{N}]+/gu, '_')}.wav`; }
 function scarica(v) { const a = document.createElement('a'); a.href = URL.createObjectURL(v.audio); a.download = nomeFile(v); a.click(); }
 function mostraRisultato(v) {
-  const R = $('risultato'); R.innerHTML = ''; const p = lettore(v.audio, { picchi: v.picchi, durata: v.durata });
+  const R = $('risultato'); R.innerHTML = ''; fermaTutto(); const p = lettore(v.audio, { picchi: v.picchi, durata: v.durata });
   const row = document.createElement('div'); row.className = 'row'; row.style.marginTop = '12px';
   const dl = document.createElement('button'); dl.className = 'btn sm'; dl.innerHTML = ICON.dl + 'Scarica'; dl.onclick = () => scarica(v);
   const st = document.createElement('button'); st.className = 'btn sm ghost'; st.textContent = 'Vai alla cronologia'; st.dataset.go = 'storia';
-  row.append(dl, st); R.append(p, row); R.classList.add('on'); p.play();
+  row.append(dl, st); R.append(p, row); R.classList.add('on'); fermaTutto();
 }
 
 // ---------- cronologia ----------
 let storia = [];
 async function caricaStoria() { storia = (await DB.all('storia')).sort((a, b) => b.data - a.data); $('cStoria').textContent = storia.length || ''; disegnaStoria(); }
 function disegnaStoria() {
-  const C = $('cronologia'), q = $('cerca').value.trim().toLowerCase(); C.innerHTML = '';
+  const C = $('cronologia'), q = $('cerca').value.trim().toLowerCase(); C.innerHTML = ''; fermaTutto();
   const lista = q ? storia.filter(v => (v.testo + ' ' + v.voce).toLowerCase().includes(q)) : storia;
   if (!storia.length) { C.innerHTML = `<div class="card empty"><div class="big">Ancora niente qui</div>Gli audio che generi finiscono qui, e restano anche quando Colab si spegne.<div style="margin-top:16px"><button class="btn" data-go="crea">Vai a Crea</button></div></div>`; return; }
   if (!lista.length) { C.innerHTML = `<div class="empty">Nessun risultato per “${esc(q)}”.</div>`; return; }
