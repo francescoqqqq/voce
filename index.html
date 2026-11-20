@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voce</title>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#fffdf8; --ink:#1f1d1a; --muted:#6f6a61; --line:#e3ded3;
+  --accent:#1f6f5c; --accent-ink:#fff; --soft:#e7f1ed; --warn:#a64b2a; --ok:#2f7d4f;
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#141412;--card:#1d1c19;--ink:#ece8df;--muted:#a19b8f;--line:#33312c;
+    --accent:#5fbf9f;--accent-ink:#0e1a16;--soft:#203029;--warn:#e08a66;--ok:#6fcf97;
+    --shadow:none}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:26px;margin:0;letter-spacing:-.02em}
+h2{font-size:16px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);cursor:pointer;font-size:14px;color:var(--ink)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--ok)} .dot.ko{background:var(--warn)}
+textarea,input[type=text],input[type=password],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:150px;resize:vertical}
+textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+label{font-size:14px;color:var(--muted);display:block;margin:10px 0 4px}
+button{font:inherit;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);
+  padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;padding:12px 22px}
+button.primary:disabled{opacity:.5;cursor:default}
+button.small{padding:4px 10px;font-size:13px}
+button.danger{color:var(--warn)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.tag{padding:4px 10px;border-radius:999px;font-size:13px;background:var(--soft);border:1px solid transparent}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.row>*{flex:1 1 180px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{border-radius:999px}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.status{font-size:14px;color:var(--muted);min-height:21px;margin-top:10px}
+.status.err{color:var(--warn)}
+audio{width:100%;margin-top:8px}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-child{border-top:0;padding-top:0}
+.meta{font-size:13px;color:var(--muted)}
+.item .txt{margin:2px 0 4px;white-space:pre-wrap;word-break:break-word}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.line{display:grid;grid-template-columns:150px 1fr auto;gap:8px;margin-bottom:8px;align-items:start}
+.line textarea{min-height:44px}
+@media (max-width:560px){.line{grid-template-columns:1fr}}
+.hidden{display:none}
+.empty{color:var(--muted);font-size:14px}
+details summary{cursor:pointer;color:var(--muted);font-size:14px}
+.rec{color:var(--warn);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+code{font-size:13px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Voce</h1>
+    <button class="pill" id="pillMotore" title="Impostazioni motore"><span class="dot" id="dot"></span><span id="statoMotore">Motore non collegato</span></button>
+  </header>
+
+  <section class="card hidden" id="cardMotore">
+    <h2>Motore (Colab)</h2>
+    <p class="meta">Avvia il notebook su Colab: alla fine ti dà un link che riempie questi campi da solo.
+      <a href="https://colab.research.google.com/github/francescoqqqq/voce/blob/main/motore.ipynb" target="_blank">Apri il notebook</a></p>
+    <label>Indirizzo del motore</label>
+    <input type="text" id="url" placeholder="https://....trycloudflare.com">
+    <label>Chiave</label>
+    <input type="password" id="chiave">
+    <div class="actions"><button id="salvaMotore">Salva e prova</button></div>
+  </section>
+
+  <section class="card">
+    <div class="tabs">
+      <button class="on" data-tab="testo">Testo</button>
+      <button data-tab="dialogo">Dialogo</button>
+    </div>
+
+    <div id="tabTesto">
+      <label for="voce">Voce</label>
+      <select id="voce"></select>
+      <label for="testo">Testo</label>
+      <textarea id="testo" placeholder="Scrivi qui. Puoi aggiungere emozioni con i pulsanti sotto."></textarea>
+    </div>
+
+    <div id="tabDialogo" class="hidden">
+      <p class="meta">Ogni battuta ha la sua voce. Le voci si aggiungono in "Le mie voci".</p>
+      <div id="righe"></div>
+      <button class="small" id="aggiungiRiga">+ battuta</button>
+    </div>
+
+    <div class="tags" id="tags"></div>
+
+    <details>
+      <summary>Impostazioni</summary>
+      <div class="row">
+        <div><label>Creatività <span id="tempV"></span></label><input type="range" id="temp" min="0.1" max="1" step="0.05" value="0.7"></div>
+        <div><label>Varietà (top-p) <span id="toppV"></span></label><input type="range" id="topp" min="0.1" max="1" step="0.05" value="0.7"></div>
+      </div>
+      <p class="meta">Valori bassi: voce più regolare. Alti: più espressiva ma meno stabile.</p>
+    </details>
+
+    <div class="actions" style="margin-top:14px">
+      <button class="primary" id="genera">Genera voce</button>
+      <button id="ferma" class="hidden">Ferma</button>
+    </div>
+    <div class="status" id="stato"></div>
+    <div id="risultato"></div>
+  </section>
+
+  <section class="card">
+    <h2>Le mie voci</h2>
+    <div id="listaVoci"></div>
+    <details id="nuovaVoce" style="margin-top:12px">
+      <summary>+ Aggiungi una voce</summary>
+      <label>Nome</label>
+      <input type="text" id="nvNome" placeholder="es. Mia voce, Narratore">
+      <label>Audio (10-30 secondi, voce pulita senza musica)</label>
+      <div class="actions">
+        <input type="file" id="nvFile" accept="audio/*">
+        <button id="nvRec">🎙 Registra</button>
+      </div>
+      <div id="nvAnteprima"></div>
+      <label>Cosa dice l'audio (consigliato: migliora molto l'imitazione)</label>
+      <textarea id="nvTesto" style="min-height:70px"></textarea>
+      <div class="actions"><button class="primary" id="nvSalva">Salva voce</button></div>
+      <div class="status" id="nvStato"></div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>Cronologia</h2>
+    <div id="cronologia"></div>
+  </section>
+</div>
+
+<script>
+// ---------- archivio locale (IndexedDB) ----------
+const DB = (() => {
+  let dbp;
+  function open() {
+    if (!dbp) dbp = new Promise((res, rej) => {
+      const r = indexedDB.open('voce', 1);
+      r.onupgradeneeded = () => {
+        r.result.createObjectStore('voci', { keyPath: 'id' });
+        r.result.createObjectStore('storia', { keyPath: 'id' });
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+    return dbp;
+  }
+  async function tx(store, mode, fn) {
+    const db = await open();
+    return new Promise((res, rej) => {
+      const t = db.transaction(store, mode);
+      const out = fn(t.objectStore(store));
+      t.oncomplete = () => res(out && 'result' in out ? out.result : undefined);
+      t.onerror = () => rej(t.error);
+    });
+  }
+  return {
+    all: s => tx(s, 'readonly', st => st.getAll()),
+    put: (s, v) => tx(s, 'readwrite', st => st.put(v)),
+    del: (s, id) => tx(s, 'readwrite', st => st.delete(id)),
+  };
+})();
+const ls = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- audio: decodifica, ricampiona, WAV ----------
+let actx;
+const ctx = () => (actx ||= new (window.AudioContext || window.webkitAudioContext)());
+async function decodifica(blob) {
+  return await ctx().decodeAudioData(await blob.arrayBuffer());
+}
+async function inMono(buf, rate, maxSec) {
+  const len = Math.min(buf.duration, maxSec || 1e9);
+  const off = new OfflineAudioContext(1, Math.ceil(len * rate), rate);
+  const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  return (await off.startRendering()).getChannelData(0);
+}
+function wav(samples, rate) {
+  const b = new ArrayBuffer(44 + samples.length * 2), v = new DataView(b);
+  const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+  }
+  return new Blob([b], { type: 'audio/wav' });
+}
+async function b64(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+// riferimento: mono 24 kHz, max 30 s
+async function preparaRiferimento(blob) {
+  return wav(await inMono(await decodifica(blob), 24000, 30), 24000);
+}
+
+// ---------- motore ----------
+const motore = { url: ls.get('motore.url', ''), chiave: ls.get('motore.chiave', '') };
+(function leggiLink() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get('motore')) {
+    motore.url = h.get('motore').replace(/\/$/, ''); motore.chiave = h.get('chiave') || '';
+    ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave);
+    history.replaceState(null, '', location.pathname);
+  }
+})();
+let collegato = false;
+async function provaMotore() {
+  $('url').value = motore.url; $('chiave').value = motore.chiave;
+  if (!motore.url) { segnaMotore(false, 'Motore non collegato'); $('cardMotore').classList.remove('hidden'); return; }
+  segnaMotore(null, 'Collego…');
+  for (let i = 0; i < 6; i++) {
+    try {
+      const r = await fetch(motore.url + '/v1/health', { headers: { Authorization: 'Bearer ' + motore.chiave } });
+      if (r.ok) { segnaMotore(true, 'Motore collegato'); return; }
+      if (r.status === 401) { segnaMotore(false, 'Chiave sbagliata'); return; }
+    } catch {}
+    await new Promise(r => setTimeout(r, 2500)); // il tunnel appena creato ci mette qualche secondo
+  }
+  segnaMotore(false, 'Motore spento — riavvia Colab');
+}
+function segnaMotore(ok, testo) {
+  collegato = ok === true;
+  $('dot').className = 'dot' + (ok === true ? ' ok' : ok === false ? ' ko' : '');
+  $('statoMotore').textContent = testo;
+}
+$('pillMotore').onclick = () => $('cardMotore').classList.toggle('hidden');
+$('salvaMotore').onclick = () => {
+  motore.url = $('url').value.trim().replace(/\/$/, ''); motore.chiave = $('chiave').value.trim();
+  ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave); provaMotore();
+};
+
+let controller = null;
+async function tts(text, references) {
+  controller = new AbortController();
+  const r = await fetch(motore.url + '/v1/tts', {
+    method: 'POST', signal: controller.signal,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + motore.chiave },
+    body: JSON.stringify({
+      text, references, format: 'wav', use_memory_cache: 'on',
+      temperature: +$('temp').value, top_p: +$('topp').value,
+    }),
+  });
+  if (!r.ok) {
+    let msg = r.status + ' ' + r.statusText;
+    try { msg += ' — ' + (await r.text()).slice(0, 300); } catch {}
+    throw new Error(msg);
+  }
+  return await r.blob();
+}
+
+// ---------- voci ----------
+let voci = [];
+async function caricaVoci() {
+  voci = (await DB.all('voci')).sort((a, b) => a.creata - b.creata);
+  const opz = '<option value="">Casuale (il modello sceglie)</option>' + voci.map(v => `<option value="${v.id}">${esc(v.nome)}</option>`).join('');
+  const scelta = ls.get('voce.scelta', '');
+  $('voce').innerHTML = opz; $('voce').value = voci.some(v => v.id === scelta) ? scelta : '';
+  document.querySelectorAll('.rigaVoce').forEach(s => { const v = s.value; s.innerHTML = opzioniDialogo(); s.value = v; });
+  $('listaVoci').innerHTML = voci.length ? '' : '<p class="empty">Nessuna voce salvata. Aggiungine una: basta un audio di 10-30 secondi.</p>';
+  for (const v of voci) {
+    const d = document.createElement('div'); d.className = 'item';
+    d.innerHTML = `<b>${esc(v.nome)}</b><div class="meta">${v.testo ? esc(v.testo.slice(0, 120)) : 'senza trascrizione'}</div>`;
+    const a = document.createElement('audio'); a.controls = true; a.src = URL.createObjectURL(v.audio); d.append(a);
+    const act = document.createElement('div'); act.className = 'actions';
+    const del = document.createElement('button'); del.className = 'small danger'; del.textContent = 'Elimina';
+    del.onclick = async () => { if (confirm(`Eliminare la voce "${v.nome}"?`)) { await DB.del('voci', v.id); caricaVoci(); } };
+    act.append(del); d.append(act); $('listaVoci').append(d);
+  }
+}
+$('voce').onchange = () => ls.set('voce.scelta', $('voce').value);
+
+let nvBlob = null, rec = null;
+function anteprima(blob) {
+  nvBlob = blob;
+  $('nvAnteprima').innerHTML = ''; const a = document.createElement('audio'); a.controls = true; a.src = URL.createObjectURL(blob);
+  $('nvAnteprima').append(a);
+}
+$('nvFile').onchange = e => { if (e.target.files[0]) anteprima(e.target.files[0]); };
+$('nvRec').onclick = async () => {
+  if (rec && rec.state === 'recording') { rec.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const parti = []; rec = new MediaRecorder(stream);
+    rec.ondataavailable = e => parti.push(e.data);
+    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); anteprima(new Blob(parti, { type: rec.mimeType }));
+      $('nvRec').textContent = '🎙 Registra'; $('nvRec').classList.remove('rec'); };
+    rec.start(); $('nvRec').textContent = '■ Ferma registrazione'; $('nvRec').classList.add('rec');
+  } catch (e) { $('nvStato').textContent = 'Microfono non disponibile: ' + e.message; }
+};
+$('nvSalva').onclick = async () => {
+  const nome = $('nvNome').value.trim();
+  if (!nome || !nvBlob) { $('nvStato').textContent = 'Servono un nome e un audio.'; return; }
+  try {
+    $('nvStato').textContent = 'Preparo l\'audio…';
+    const audio = await preparaRiferimento(nvBlob);
+    await DB.put('voci', { id: uid(), nome, testo: $('nvTesto').value.trim(), audio, creata: Date.now() });
+    $('nvNome').value = ''; $('nvTesto').value = ''; $('nvFile').value = ''; $('nvAnteprima').innerHTML = ''; nvBlob = null;
+    $('nvStato').textContent = 'Voce salvata ✅'; caricaVoci();
+  } catch (e) { $('nvStato').textContent = 'Non riesco a leggere questo audio: ' + e.message; }
+};
+async function riferimento(v) { return { audio: await b64(v.audio), text: v.testo || '' }; }
+
+// ---------- emozioni ----------
+const TAG = [['ride', 'laughing'], ['ridacchia', 'chuckling'], ['sussurra', 'whispering'], ['urla', 'shouting'],
+  ['felice', 'happy'], ['emozionato', 'excited'], ['triste', 'sad'], ['arrabbiato', 'angry'], ['sarcastico', 'sarcastic'],
+  ['calmo', 'calm'], ['sospira', 'sighing'], ['respiro', 'breath'], ['pausa', 'pause'], ['piange', 'crying']];
+let ultimoCampo = null;
+document.addEventListener('focusin', e => { if (e.target.tagName === 'TEXTAREA' && e.target.id !== 'nvTesto') ultimoCampo = e.target; });
+TAG.forEach(([it, en]) => {
+  const b = document.createElement('button'); b.className = 'tag'; b.textContent = it; b.title = `[${en}]`;
+  b.onmousedown = e => e.preventDefault();
+  b.onclick = () => {
+    const t = ultimoCampo || $('testo'); const s = t.selectionStart ?? t.value.length, e = t.selectionEnd ?? s;
+    const ins = `[${en}] `; t.value = t.value.slice(0, s) + ins + t.value.slice(e);
+    t.focus(); t.selectionStart = t.selectionEnd = s + ins.length;
+  };
+  $('tags').append(b);
+});
+
+// ---------- dialogo ----------
+const opzioniDialogo = () => voci.length ? voci.map(v => `<option value="${v.id}">${esc(v.nome)}</option>`).join('') : '<option value="">(aggiungi prima delle voci)</option>';
+function aggiungiRiga(voceId = '', testo = '') {
+  const d = document.createElement('div'); d.className = 'line';
+  d.innerHTML = `<select class="rigaVoce">${opzioniDialogo()}</select><textarea placeholder="Battuta…"></textarea><button class="small danger" title="Togli">✕</button>`;
+  if (voceId) d.querySelector('select').value = voceId;
+  d.querySelector('textarea').value = testo;
+  d.querySelector('button').onclick = () => d.remove();
+  $('righe').append(d);
+}
+$('aggiungiRiga').onclick = () => {
+  const ultime = [...document.querySelectorAll('.rigaVoce')];
+  // alterna automaticamente le voci
+  let id = ''; if (voci.length > 1 && ultime.length) { const i = voci.findIndex(v => v.id === ultime.at(-1).value); id = voci[(i + 1) % voci.length].id; }
+  aggiungiRiga(id);
+};
+let modo = 'testo';
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  modo = b.dataset.tab;
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  $('tabTesto').classList.toggle('hidden', modo !== 'testo');
+  $('tabDialogo').classList.toggle('hidden', modo !== 'dialogo');
+  if (modo === 'dialogo' && !$('righe').children.length) { aggiungiRiga(); $('aggiungiRiga').click(); }
+});
+
+// ---------- generazione ----------
+// testi lunghi: pezzi da ~250 caratteri (il tunnel chiude le richieste oltre ~100 s)
+function spezza(t, max = 250) {
+  const frasi = t.replace(/\s+/g, ' ').trim().match(/[^.!?…]+[.!?…]*["»”]?\s*/g) || [t];
+  const out = []; let cur = '';
+  for (const f of frasi) {
+    if ((cur + f).length > max && cur) { out.push(cur.trim()); cur = ''; }
+    if (f.length > max) { for (const p of f.match(new RegExp(`.{1,${max}}(\\s|$)`, 'g'))) out.push(p.trim()); }
+    else cur += f;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+function stato(t, err) { $('stato').textContent = t; $('stato').className = 'status' + (err ? ' err' : ''); }
+
+async function unisci(blobs) {
+  const rate = 44100, pausa = new Float32Array(Math.round(rate * 0.25)); const parti = [];
+  for (const [i, b] of blobs.entries()) { parti.push(await inMono(await decodifica(b), rate)); if (i < blobs.length - 1) parti.push(pausa); }
+  const tot = new Float32Array(parti.reduce((n, p) => n + p.length, 0)); let o = 0;
+  for (const p of parti) { tot.set(p, o); o += p.length; }
+  return wav(tot, rate);
+}
+
+$('genera').onclick = async () => {
+  if (!collegato) { await provaMotore(); if (!collegato) { stato('Il motore non risponde: avvia il notebook su Colab e apri il link che ti dà.', true); $('cardMotore').classList.remove('hidden'); return; } }
+  $('genera').disabled = true; $('ferma').classList.remove('hidden'); $('risultato').innerHTML = '';
+  const t0 = Date.now();
+  try {
+    let blobs = [], descr, nomeVoce, testoTot;
+    if (modo === 'testo') {
+      testoTot = $('testo').value.trim(); if (!testoTot) throw new Error('Scrivi un testo.');
+      const v = voci.find(x => x.id === $('voce').value); nomeVoce = v ? v.nome : 'Casuale';
+      let refs = v ? [await riferimento(v)] : [];
+      const pezzi = spezza(testoTot);
+      for (const [i, p] of pezzi.entries()) {
+        stato(pezzi.length > 1 ? `Genero il pezzo ${i + 1} di ${pezzi.length}…` : 'Genero…');
+        const b = await tts(p, refs); blobs.push(b);
+        // senza voce scelta: il primo pezzo fa da voce per gli altri, così non cambia a metà
+        if (!v && i === 0 && pezzi.length > 1) refs = [{ audio: await b64(await preparaRiferimento(b)), text: p }];
+      }
+    } else {
+      const righe = [...$('righe').children].map(d => ({ id: d.querySelector('select').value, t: d.querySelector('textarea').value.trim() })).filter(r => r.t);
+      if (!righe.length) throw new Error('Scrivi almeno una battuta.');
+      if (righe.some(r => !voci.find(v => v.id === r.id))) throw new Error('Ogni battuta deve avere una voce salvata.');
+      const usate = [...new Set(righe.map(r => r.id))];
+      const refs = [];
+      for (const [n, id] of usate.entries()) { const r = await riferimento(voci.find(v => v.id === id)); r.speaker = n; refs.push(r); }
+      // gruppi di battute da ~250 caratteri, ogni gruppo con tutte le voci
+      const gruppi = []; let g = [];
+      for (const r of righe) { if (g.length && (g.map(x => x.t).join(' ') + r.t).length > 250) { gruppi.push(g); g = []; } g.push(r); }
+      if (g.length) gruppi.push(g);
+      for (const [i, gr] of gruppi.entries()) {
+        stato(gruppi.length > 1 ? `Genero la parte ${i + 1} di ${gruppi.length}…` : 'Genero il dialogo…');
+        blobs.push(await tts(gr.map(r => `<|speaker:${usate.indexOf(r.id)}|>${r.t}`).join('\n'), refs));
+      }
+      testoTot = righe.map(r => `${voci.find(v => v.id === r.id).nome}: ${r.t}`).join('\n');
+      nomeVoce = usate.map(id => voci.find(v => v.id === id).nome).join(', ');
+    }
+    stato('Unisco…');
+    const audio = blobs.length === 1 ? blobs[0] : await unisci(blobs);
+    const sec = ((Date.now() - t0) / 1000).toFixed(0);
+    const voce = { id: uid(), data: Date.now(), testo: testoTot, voce: nomeVoce, audio, modo };
+    await DB.put('storia', voce);
+    stato(`Fatto in ${sec} s ✅`);
+    mostraRisultato(voce); caricaStoria();
+  } catch (e) {
+    stato(e.name === 'AbortError' ? 'Fermato.' : 'Errore: ' + e.message, e.name !== 'AbortError');
+    if (e instanceof TypeError) { segnaMotore(false, 'Motore non raggiungibile'); }
+  } finally {
+    $('genera').disabled = false; $('ferma').classList.add('hidden'); controller = null;
+  }
+};
+$('ferma').onclick = () => controller && controller.abort();
+
+function nomeFile(v) {
+  const d = new Date(v.data);
+  return `voce_${d.toISOString().slice(0, 16).replace(/[-:T]/g, '')}_${v.testo.slice(0, 24).replace(/[^\p{L}\p{N}]+/gu, '_')}.wav`;
+}
+function scarica(v) { const a = document.createElement('a'); a.href = URL.createObjectURL(v.audio); a.download = nomeFile(v); a.click(); }
+function mostraRisultato(v) {
+  const a = document.createElement('audio'); a.controls = true; a.autoplay = true; a.src = URL.createObjectURL(v.audio);
+  const b = document.createElement('button'); b.textContent = '⬇ Scarica'; b.onclick = () => scarica(v);
+  const act = document.createElement('div'); act.className = 'actions'; act.append(b);
+  $('risultato').replaceChildren(a, act);
+}
+
+// ---------- cronologia ----------
+async function caricaStoria() {
+  const s = (await DB.all('storia')).sort((a, b) => b.data - a.data);
+  $('cronologia').innerHTML = s.length ? '' : '<p class="empty">Qui finiscono gli audio che generi, anche dopo che Colab si è spento.</p>';
+  for (const v of s) {
+    const d = document.createElement('div'); d.className = 'item';
+    d.innerHTML = `<div class="meta">${new Date(v.data).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })} · ${esc(v.voce || '')}</div><div class="txt">${esc(v.testo.length > 220 ? v.testo.slice(0, 220) + '…' : v.testo)}</div>`;
+    const a = document.createElement('audio'); a.controls = true; a.preload = 'none'; a.src = URL.createObjectURL(v.audio); d.append(a);
+    const act = document.createElement('div'); act.className = 'actions';
+    const dl = document.createElement('button'); dl.className = 'small'; dl.textContent = '⬇ Scarica'; dl.onclick = () => scarica(v);
+    const re = document.createElement('button'); re.className = 'small'; re.textContent = 'Riusa testo';
+    re.onclick = () => { if (v.modo === 'dialogo') return; document.querySelector('[data-tab=testo]').click(); $('testo').value = v.testo; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    const del = document.createElement('button'); del.className = 'small danger'; del.textContent = 'Elimina';
+    del.onclick = async () => { await DB.del('storia', v.id); caricaStoria(); };
+    act.append(dl); if (v.modo !== 'dialogo') act.append(re); act.append(del); d.append(act); $('cronologia').append(d);
+  }
+}
+
+// ---------- impostazioni ----------
+for (const k of ['temp', 'topp']) {
+  $(k).value = ls.get('imp.' + k, $(k).value);
+  const show = () => { $(k + 'V').textContent = (+$(k).value).toFixed(2); ls.set('imp.' + k, $(k).value); };
+  $(k).oninput = show; show();
+}
+$('testo').value = ls.get('bozza', '');
+$('testo').oninput = () => ls.set('bozza', $('testo').value);
+
+caricaVoci(); caricaStoria(); provaMotore();
+</script>
+</body>
+</html>
