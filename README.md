@@ -14,7 +14,7 @@ Interfaccia personale per la sintesi vocale Fish Audio S2 Pro.
 
 ## Come funziona la pagina
 - Testi lunghi: divisi in pezzi da ~400 caratteri, tagliati a fine frase (il tunnel chiude le richieste oltre ~100 s), poi riuniti in un unico WAV. Senza una voce scelta, il primo pezzo fa da voce di riferimento per gli altri, così il timbro non cambia.
-- Voci: uno o più audio (file o registrazione) della stessa persona vengono convertiti in mono 44,1 kHz (la frequenza del codec: a 24 kHz la voce imitata veniva più spenta) e uniti con 0,3 s di pausa in un unico WAV (ideale 20-30 s, massimo 45 s). La trascrizione si usa solo se ce l'hanno tutti i pezzi. Il campione viene mandato a ogni richiesta. Non si usano più riferimenti separati per la stessa persona: per S2 Pro ogni riferimento è un personaggio diverso.
+- Voci: uno o più audio (file o registrazione) della stessa persona vengono convertiti in mono 44,1 kHz (la frequenza del codec: a 24 kHz la voce imitata veniva più spenta) e uniti con 0,3 s di pausa in un unico WAV (ideale 20-30 s, massimo 50 s). La trascrizione si usa solo se ce l'hanno tutti i pezzi. Il campione viene mandato a ogni richiesta. Non si usano più riferimenti separati per la stessa persona: per S2 Pro ogni riferimento è un personaggio diverso.
 - Sezioni: Crea, Le mie voci, Aggiungi voce, Cronologia (con ricerca). Lettore audio con forma d'onda disegnata dalla pagina.
 - Dialogo: testo con `<|speaker:N|>` e le voci in `references` con `speaker` = N.
 

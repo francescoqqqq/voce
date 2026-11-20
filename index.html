@@ -247,7 +247,7 @@ a{color:var(--accent)}
   <section class="view" id="v-nuova">
     <div class="card">
       <h2>Aggiungi una voce</h2>
-      <p class="sub">Carica uno o più audio della stessa persona: vengono uniti in un unico campione. Ideale 20-30 secondi in tutto, voce pulita, senza musica né altre persone.</p>
+      <p class="sub">Carica uno o più audio della stessa persona: vengono uniti in un unico campione. Fino a 50 secondi in tutto (ideale 20-30), voce pulita, senza musica né altre persone.</p>
       <div class="lbl">Nome</div>
       <input type="text" id="nvNome" placeholder="es. Mia voce, Narratore, Nonna">
       <div class="lbl">Audio</div>
@@ -481,7 +481,7 @@ function disegnaVoci() {
 async function riferimento(v) { return { audio: await b64(v.audio), text: v.testo || '' }; }
 
 // ---------- aggiungi voce ----------
-const MAX = 45, IDEALE = 30, RATE_REF = 44100;
+const MAX = 50, IDEALE = 30, RATE_REF = 44100;
 let clips = [];
 async function aggiungiClip(blob, nome) {
   try {
@@ -505,7 +505,7 @@ function disegnaClips() {
   });
   const tot = durataTot();
   $('durBox').classList.toggle('hidden', !clips.length);
-  $('durTxt').textContent = `${fmt(tot)} ${tot > MAX ? '— troppo lungo, togli un audio' : tot < 8 ? '— un po\' corto, meglio almeno 10-20 s' : tot > IDEALE ? '— va bene, ma oltre 30 s rallenta' : '— perfetto'}`;
+  $('durTxt').textContent = `${fmt(tot)} ${tot > MAX ? '— troppo lungo, togli un audio' : tot < 8 ? '— un po\' corto, meglio almeno 10-20 s' : tot > IDEALE ? '— va bene, ma oltre 30 s la generazione è un po\' più lenta' : '— perfetto'}`;
   $('meter').classList.toggle('over', tot > MAX);
   $('meter').firstChild.style.width = Math.min(100, tot / MAX * 100) + '%';
 }
