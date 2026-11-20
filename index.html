@@ -2,199 +2,327 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Voce</title>
+<meta name="theme-color" content="#121311">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2366d1a8'/%3E%3Cg stroke='%23102019' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M9 13v6M14 9v14M19 12v8M24 14v4'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{
-  --bg:#f6f4ef; --card:#fffdf8; --ink:#1f1d1a; --muted:#6f6a61; --line:#e3ded3;
-  --accent:#1f6f5c; --accent-ink:#fff; --soft:#e7f1ed; --warn:#a64b2a; --ok:#2f7d4f;
-  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --bg:#121311; --bg2:#181a17; --card:#1d1f1c; --card2:#242723; --ink:#eeebe3; --muted:#9c978c; --faint:#6b675f;
+  --line:#2c2f2a; --accent:#66d1a8; --accent2:#3fa883; --accent-ink:#0d1a15; --soft:rgba(102,209,168,.12);
+  --warn:#ef8a68; --wave:#4a4e47; --radius:18px; --shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 10px 30px rgba(0,0,0,.25);
 }
-@media (prefers-color-scheme: dark){
-  :root{--bg:#141412;--card:#1d1c19;--ink:#ece8df;--muted:#a19b8f;--line:#33312c;
-    --accent:#5fbf9f;--accent-ink:#0e1a16;--soft:#203029;--warn:#e08a66;--ok:#6fcf97;
-    --shadow:none}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f4f2ec;--bg2:#ece9e1;--card:#fffdf8;--card2:#f6f3ec;--ink:#1d1c19;--muted:#6c675e;--faint:#9a958b;
+    --line:#e2ddd2;--accent:#1f8a66;--accent2:#176e51;--accent-ink:#fff;--soft:rgba(31,138,102,.1);--warn:#b4532f;--wave:#d3cec3;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05)}
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:860px;margin:0 auto;padding:20px 16px 80px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:15.5px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(1200px 500px at 15% -10%,rgba(102,209,168,.10),transparent 60%),var(--bg);min-height:100vh}
+.wrap{max-width:880px;margin:0 auto;padding:22px 16px 110px}
+/* header */
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
-h1{font-size:26px;margin:0;letter-spacing:-.02em}
-h2{font-size:16px;margin:0 0 12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);
-  background:var(--card);cursor:pointer;font-size:14px;color:var(--ink)}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.dot.ok{background:var(--ok)} .dot.ko{background:var(--warn)}
-textarea,input[type=text],input[type=password],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);
-  border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-textarea{min-height:150px;resize:vertical}
-textarea:focus,input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
-label{font-size:14px;color:var(--muted);display:block;margin:10px 0 4px}
-button{font:inherit;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);
-  padding:8px 14px;cursor:pointer}
-button:hover{border-color:var(--accent)}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;padding:12px 22px}
-button.primary:disabled{opacity:.5;cursor:default}
-button.small{padding:4px 10px;font-size:13px}
-button.danger{color:var(--warn)}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-.tag{padding:4px 10px;border-radius:999px;font-size:13px;background:var(--soft);border:1px solid transparent}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.row>*{flex:1 1 180px}
-.tabs{display:flex;gap:6px;margin-bottom:12px}
-.tabs button{border-radius:999px}
-.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.status{font-size:14px;color:var(--muted);min-height:21px;margin-top:10px}
-.status.err{color:var(--warn)}
-audio{width:100%;margin-top:8px}
-.item{border-top:1px solid var(--line);padding:12px 0}
-.item:first-child{border-top:0;padding-top:0}
-.meta{font-size:13px;color:var(--muted)}
-.item .txt{margin:2px 0 4px;white-space:pre-wrap;word-break:break-word}
-.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.line{display:grid;grid-template-columns:150px 1fr auto;gap:8px;margin-bottom:8px;align-items:start}
-.line textarea{min-height:44px}
-@media (max-width:560px){.line{grid-template-columns:1fr}}
-.hidden{display:none}
-.empty{color:var(--muted);font-size:14px}
-details summary{cursor:pointer;color:var(--muted);font-size:14px}
-.rec{color:var(--warn);font-weight:600}
+.logo{display:flex;align-items:center;gap:10px;font-family:"Instrument Serif",Georgia,serif;font-size:34px;letter-spacing:-.01em;line-height:1}
+.logo .mark{width:36px;height:36px;border-radius:11px;background:var(--accent);display:grid;place-items:center}
+.logo em{color:var(--accent);font-style:italic}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);cursor:pointer;font-size:13.5px;color:var(--ink);font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);box-shadow:0 0 0 3px rgba(255,255,255,.04)}
+.dot.ok{background:var(--accent);box-shadow:0 0 0 3px var(--soft)} .dot.ko{background:var(--warn)}
+.dot.wait{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.3}}
+/* nav */
+nav{display:flex;gap:4px;padding:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:18px}
+nav button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent;color:var(--muted);
+  padding:10px 8px;border-radius:10px;font:500 14.5px Inter,sans-serif;cursor:pointer}
+nav button svg{width:18px;height:18px;flex:none}
+nav button.on{background:var(--card2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+nav .count{font-size:12px;color:var(--faint);font-weight:500}
+@media (max-width:640px){
+  nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:20;margin:0;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+  nav button{flex-direction:column;gap:3px;font-size:11.5px;padding:8px 2px}
+  nav .count{display:none}
+  .logo{font-size:30px}
+}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.view{display:none;animation:fade .2s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+h2{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:30px;margin:4px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+.lbl{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center}
+.lbl:first-child{margin-top:0}
+textarea,input[type=text],input[type=password],select{width:100%;font:inherit;color:var(--ink);background:var(--bg2);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:border-color .15s}
+textarea{min-height:170px;resize:vertical;line-height:1.6}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c978c' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+button{font:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:11px;border:1px solid var(--line);
+  background:var(--card2);color:var(--ink);padding:9px 15px;font-weight:500;font-size:14.5px;transition:border-color .15s,transform .05s}
+.btn:hover{border-color:var(--faint)} .btn:active{transform:scale(.98)}
+.btn svg{width:17px;height:17px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600;padding:13px 24px;font-size:15.5px}
+.btn.primary:hover{background:var(--accent2);color:#fff}
+.btn.primary:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:6px 11px;font-size:13.5px;border-radius:9px}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--warn)}
+.btn.icon{padding:8px;width:36px;height:36px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+/* segmented */
+.seg{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:3px;margin-bottom:6px}
+.seg button{border:0;background:transparent;color:var(--muted);padding:7px 16px;border-radius:8px;font-weight:500;font-size:14px}
+.seg button.on{background:var(--card2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+/* voice chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.chip{display:flex;align-items:center;gap:9px;flex:none;border:1px solid var(--line);background:var(--bg2);color:var(--ink);
+  border-radius:999px;padding:5px 14px 5px 5px;font-weight:500;font-size:14px}
+.chip.on{border-color:var(--accent);background:var(--soft)}
+.chip.add{padding:5px 14px;color:var(--muted);border-style:dashed}
+.av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#10140f;flex:none}
+.av.lg{width:46px;height:46px;font-size:19px;border-radius:14px}
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:4px 11px;font-size:13px}
+.tag:hover{color:var(--ink);border-color:var(--accent);background:var(--soft)}
+details.imp{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+details.imp summary{cursor:pointer;color:var(--muted);font-size:14px;list-style:none;display:flex;align-items:center;gap:6px}
+details.imp summary::before{content:"›";display:inline-block;transition:transform .15s;font-size:18px;line-height:1}
+details.imp[open] summary::before{transform:rotate(90deg)}
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
+@media (max-width:560px){.sliders{grid-template-columns:1fr}}
+.sl label{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted)}
+.sl b{color:var(--ink);font-weight:600}
 input[type=range]{width:100%;accent-color:var(--accent)}
-code{font-size:13px;word-break:break-all}
+.hint{font-size:13px;color:var(--faint);margin:8px 0 0}
+.genbar{display:flex;align-items:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+.status{font-size:14px;color:var(--muted)}
+.status.err{color:var(--warn)}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid var(--soft);border-top-color:var(--accent);animation:spin .8s linear infinite;display:inline-block;vertical-align:-3px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress{height:4px;background:var(--bg2);border-radius:4px;overflow:hidden;margin-top:12px;display:none}
+.progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+/* result */
+.result{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);display:none}
+.result.on{display:block;animation:fade .25s}
+/* player */
+.player{display:flex;align-items:center;gap:12px;min-width:0}
+.player .play{width:42px;height:42px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.player .play svg{width:16px;height:16px}
+.player.sm .play{width:34px;height:34px}
+.player canvas{flex:1;min-width:0;height:40px;cursor:pointer;display:block}
+.player.sm canvas{height:32px}
+.player .t{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
+/* lists */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow)}
+.vcard .top{display:flex;gap:12px;align-items:center}
+.vcard .nm{font-weight:600;font-size:16px}
+.vcard .info{font-size:13px;color:var(--muted)}
+.vcard .tr{font-size:13.5px;color:var(--muted);font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hitem{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.hitem .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.hitem .when{font-size:13px;color:var(--muted)}
+.hitem .txt{margin:0 0 12px;white-space:pre-wrap;word-break:break-word;font-size:15px}
+.hitem .txt.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.hitem .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.badge{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:600}
+.empty{text-align:center;padding:42px 20px;color:var(--muted)}
+.empty .big{font-family:"Instrument Serif",Georgia,serif;font-size:24px;color:var(--ink);margin-bottom:6px}
+.search{margin-bottom:14px}
+/* dialog lines */
+.line{display:grid;grid-template-columns:170px 1fr 36px;gap:8px;margin-bottom:8px;align-items:start}
+.line textarea{min-height:48px}
+@media (max-width:560px){.line{grid-template-columns:1fr 36px}.line select{grid-column:1/-1}}
+/* add voice */
+.drop{border:1.5px dashed var(--line);border-radius:16px;padding:26px 16px;text-align:center;background:var(--bg2);transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--accent);background:var(--soft)}
+.drop .row{justify-content:center;margin-top:12px}
+.clip{border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;background:var(--bg2)}
+.clip .row{margin-bottom:8px}
+.clip .n{font-size:13px;color:var(--muted);font-weight:600}
+.clip textarea{min-height:58px;background:var(--card)}
+.meter{height:8px;border-radius:8px;background:var(--bg2);overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.meter.over i{background:var(--warn)}
+.rec-on{color:var(--warn)!important;border-color:var(--warn)!important}
+.rec-on::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--warn);animation:pulse 1s infinite}
+.hidden{display:none!important}
+code{font-size:12.5px;word-break:break-all;color:var(--muted)}
+a{color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;
+  font-weight:500;font-size:14px;opacity:0;transition:all .25s;z-index:50;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:640px){.toast{bottom:96px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Voce</h1>
-    <button class="pill" id="pillMotore" title="Impostazioni motore"><span class="dot" id="dot"></span><span id="statoMotore">Motore non collegato</span></button>
+    <div class="logo"><span class="mark"><svg width="20" height="20" viewBox="0 0 20 20"><g stroke="#102019" stroke-width="2.4" stroke-linecap="round"><path d="M3 8v4M7.5 4.5v11M12 7v6M16.5 9v2"/></g></svg></span>Voce</div>
+    <button class="pill" id="pillMotore"><span class="dot" id="dot"></span><span id="statoMotore">Motore non collegato</span></button>
   </header>
 
   <section class="card hidden" id="cardMotore">
-    <h2>Motore (Colab)</h2>
-    <p class="meta">Avvia il notebook su Colab: alla fine ti dà un link che riempie questi campi da solo.
-      <a href="https://colab.research.google.com/github/francescoqqqq/voce/blob/main/motore.ipynb" target="_blank">Apri il notebook</a></p>
-    <label>Indirizzo del motore</label>
-    <input type="text" id="url" placeholder="https://....trycloudflare.com">
-    <label>Chiave</label>
-    <input type="password" id="chiave">
-    <div class="actions"><button id="salvaMotore">Salva e prova</button></div>
+    <div class="lbl">Motore su Colab</div>
+    <p class="sub" style="margin-bottom:12px">Apri il notebook, premi ▶ e alla fine clicca il link che compare: questi campi si riempiono da soli.
+      <a href="https://colab.research.google.com/github/francescoqqqq/voce/blob/main/motore.ipynb" target="_blank" rel="noopener">Apri il notebook ↗</a></p>
+    <div class="row">
+      <input class="grow" type="text" id="url" placeholder="https://….trycloudflare.com" style="min-width:220px">
+      <input class="grow" type="password" id="chiave" placeholder="chiave" style="min-width:160px">
+      <button class="btn" id="salvaMotore">Collega</button>
+    </div>
   </section>
 
-  <section class="card">
-    <div class="tabs">
-      <button class="on" data-tab="testo">Testo</button>
-      <button data-tab="dialogo">Dialogo</button>
-    </div>
+  <nav id="nav">
+    <button data-v="crea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10v4M8 6v12M12 9v6M16 4v16M20 10v4"/></svg>Crea</button>
+    <button data-v="voci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M17 7.5c1 .8 1.5 1.8 1.5 3s-.5 2.2-1.5 3M19.5 5c1.6 1.4 2.5 3.3 2.5 5.5S21.1 14.6 19.5 16"/></svg>Le mie voci <span class="count" id="cVoci"></span></button>
+    <button data-v="nuova"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Aggiungi voce</button>
+    <button data-v="storia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Cronologia <span class="count" id="cStoria"></span></button>
+  </nav>
 
-    <div id="tabTesto">
-      <label for="voce">Voce</label>
-      <select id="voce"></select>
-      <label for="testo">Testo</label>
-      <textarea id="testo" placeholder="Scrivi qui. Puoi aggiungere emozioni con i pulsanti sotto."></textarea>
-    </div>
-
-    <div id="tabDialogo" class="hidden">
-      <p class="meta">Ogni battuta ha la sua voce. Le voci si aggiungono in "Le mie voci".</p>
-      <div id="righe"></div>
-      <button class="small" id="aggiungiRiga">+ battuta</button>
-    </div>
-
-    <div class="tags" id="tags"></div>
-
-    <details>
-      <summary>Impostazioni</summary>
-      <div class="row">
-        <div><label>Creatività <span id="tempV"></span></label><input type="range" id="temp" min="0.1" max="1" step="0.05" value="0.7"></div>
-        <div><label>Varietà (top-p) <span id="toppV"></span></label><input type="range" id="topp" min="0.1" max="1" step="0.05" value="0.7"></div>
+  <!-- CREA -->
+  <section class="view" id="v-crea">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="seg" id="modo"><button class="on" data-m="testo">Testo</button><button data-m="dialogo">Dialogo</button></div>
       </div>
-      <p class="meta">Valori bassi: voce più regolare. Alti: più espressiva ma meno stabile.</p>
-    </details>
 
-    <div class="actions" style="margin-top:14px">
-      <button class="primary" id="genera">Genera voce</button>
-      <button id="ferma" class="hidden">Ferma</button>
-    </div>
-    <div class="status" id="stato"></div>
-    <div id="risultato"></div>
-  </section>
-
-  <section class="card">
-    <h2>Le mie voci</h2>
-    <div id="listaVoci"></div>
-    <details id="nuovaVoce" style="margin-top:12px">
-      <summary>+ Aggiungi una voce</summary>
-      <label>Nome</label>
-      <input type="text" id="nvNome" placeholder="es. Mia voce, Narratore">
-      <label>Audio (10-30 secondi, voce pulita senza musica)</label>
-      <div class="actions">
-        <input type="file" id="nvFile" accept="audio/*">
-        <button id="nvRec">🎙 Registra</button>
+      <div id="tabTesto">
+        <div class="lbl">Voce</div>
+        <div class="chips" id="chips"></div>
+        <div class="lbl">Testo <span id="nCar" style="text-transform:none;letter-spacing:0;font-weight:500"></span></div>
+        <textarea id="testo" placeholder="Scrivi qui quello che vuoi far dire…"></textarea>
       </div>
-      <div id="nvAnteprima"></div>
-      <label>Cosa dice l'audio (consigliato: migliora molto l'imitazione)</label>
-      <textarea id="nvTesto" style="min-height:70px"></textarea>
-      <div class="actions"><button class="primary" id="nvSalva">Salva voce</button></div>
-      <div class="status" id="nvStato"></div>
-    </details>
+
+      <div id="tabDialogo" class="hidden">
+        <div class="lbl">Battute</div>
+        <div id="righe"></div>
+        <button class="btn sm ghost" id="aggiungiRiga">+ Aggiungi battuta</button>
+      </div>
+
+      <div class="tags" id="tags"></div>
+
+      <details class="imp">
+        <summary>Impostazioni</summary>
+        <div class="sliders">
+          <div class="sl"><label>Espressività <b id="tempV"></b></label><input type="range" id="temp" min="0.1" max="1" step="0.05" value="0.7"></div>
+          <div class="sl"><label>Varietà <b id="toppV"></b></label><input type="range" id="topp" min="0.1" max="1" step="0.05" value="0.7"></div>
+        </div>
+        <p class="hint">Valori bassi: voce più regolare e stabile. Alti: più viva, ma a volte sbaglia. 0,7 va bene quasi sempre.</p>
+      </details>
+
+      <div class="genbar">
+        <button class="btn primary" id="genera"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Genera voce</button>
+        <button class="btn hidden" id="ferma">Ferma</button>
+        <span class="status" id="stato"></span>
+      </div>
+      <div class="progress" id="prog"><i></i></div>
+      <div class="result" id="risultato"></div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>Cronologia</h2>
+  <!-- VOCI -->
+  <section class="view" id="v-voci">
+    <div class="row" style="justify-content:space-between;margin-bottom:14px">
+      <div><h2>Le mie voci</h2><p class="sub" style="margin:0">Le voci che il modello può imitare. Restano salvate in questo browser.</p></div>
+      <button class="btn" data-go="nuova">+ Nuova voce</button>
+    </div>
+    <div class="grid" id="listaVoci"></div>
+  </section>
+
+  <!-- NUOVA VOCE -->
+  <section class="view" id="v-nuova">
+    <div class="card">
+      <h2>Aggiungi una voce</h2>
+      <p class="sub">Carica uno o più audio della stessa persona: vengono uniti in un unico campione. Ideale 20-30 secondi in tutto, voce pulita, senza musica né altre persone.</p>
+      <div class="lbl">Nome</div>
+      <input type="text" id="nvNome" placeholder="es. Mia voce, Narratore, Nonna">
+      <div class="lbl">Audio</div>
+      <div class="drop" id="drop">
+        <div style="font-weight:600">Trascina qui i file audio</div>
+        <div class="hint" style="margin:2px 0 0">mp3, wav, m4a, ogg… anche più di uno</div>
+        <div class="row">
+          <label class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>Scegli file<input type="file" id="nvFile" accept="audio/*,video/*" multiple hidden></label>
+          <button class="btn" id="nvRec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Registra</span></button>
+        </div>
+      </div>
+      <div id="clips"></div>
+      <div id="durBox" class="hidden" style="margin-top:14px">
+        <div class="row" style="justify-content:space-between;font-size:13.5px;color:var(--muted);margin-bottom:6px"><span>Durata totale</span><span id="durTxt"></span></div>
+        <div class="meter" id="meter"><i></i></div>
+      </div>
+      <p class="hint">Scrivi sotto ogni audio cosa dice, parola per parola: è la cosa che migliora di più l'imitazione.</p>
+      <div class="genbar">
+        <button class="btn primary" id="nvSalva">Salva voce</button>
+        <span class="status" id="nvStato"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CRONOLOGIA -->
+  <section class="view" id="v-storia">
+    <div class="row" style="justify-content:space-between;margin-bottom:14px">
+      <div><h2>Cronologia</h2><p class="sub" style="margin:0">Tutto quello che hai generato, anche a motore spento.</p></div>
+    </div>
+    <input type="text" class="search" id="cerca" placeholder="Cerca nel testo o per voce…">
     <div id="cronologia"></div>
   </section>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ---------- archivio locale (IndexedDB) ----------
-const DB = (() => {
-  let dbp;
-  function open() {
-    if (!dbp) dbp = new Promise((res, rej) => {
-      const r = indexedDB.open('voce', 1);
-      r.onupgradeneeded = () => {
-        r.result.createObjectStore('voci', { keyPath: 'id' });
-        r.result.createObjectStore('storia', { keyPath: 'id' });
-      };
-      r.onsuccess = () => res(r.result);
-      r.onerror = () => rej(r.error);
-    });
-    return dbp;
-  }
-  async function tx(store, mode, fn) {
-    const db = await open();
-    return new Promise((res, rej) => {
-      const t = db.transaction(store, mode);
-      const out = fn(t.objectStore(store));
-      t.oncomplete = () => res(out && 'result' in out ? out.result : undefined);
-      t.onerror = () => rej(t.error);
-    });
-  }
-  return {
-    all: s => tx(s, 'readonly', st => st.getAll()),
-    put: (s, v) => tx(s, 'readwrite', st => st.put(v)),
-    del: (s, id) => tx(s, 'readwrite', st => st.delete(id)),
-  };
-})();
+// ---------- utilità ----------
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ls = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
 };
-const $ = id => document.getElementById(id);
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = s => { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+function toast(t) { const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('on'), 2200); }
+const COLORI = ['#66d1a8', '#f2b56b', '#8fb3ff', '#f08fb0', '#c7a6ff', '#7fd6e0', '#e8d27a', '#f59c7c'];
+const colore = s => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return COLORI[h % COLORI.length]; };
+const avatar = (nome, cls = '') => `<span class="av ${cls}" style="background:${colore(nome)}">${esc((nome.trim()[0] || '?').toUpperCase())}</span>`;
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>',
+  del: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+};
 
-// ---------- audio: decodifica, ricampiona, WAV ----------
+// ---------- archivio locale (IndexedDB) ----------
+const DB = (() => {
+  let dbp;
+  const open = () => dbp ||= new Promise((res, rej) => {
+    const r = indexedDB.open('voce', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('voci', { keyPath: 'id' }); r.result.createObjectStore('storia', { keyPath: 'id' }); };
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  const tx = async (s, mode, fn) => { const db = await open(); return new Promise((res, rej) => {
+    const t = db.transaction(s, mode); const out = fn(t.objectStore(s));
+    t.oncomplete = () => res(out && 'result' in out ? out.result : undefined); t.onerror = () => rej(t.error); }); };
+  return { all: s => tx(s, 'readonly', st => st.getAll()), put: (s, v) => tx(s, 'readwrite', st => st.put(v)), del: (s, id) => tx(s, 'readwrite', st => st.delete(id)) };
+})();
+
+// ---------- audio ----------
 let actx;
 const ctx = () => (actx ||= new (window.AudioContext || window.webkitAudioContext)());
-async function decodifica(blob) {
-  return await ctx().decodeAudioData(await blob.arrayBuffer());
-}
+const decodifica = async blob => ctx().decodeAudioData(await blob.arrayBuffer());
 async function inMono(buf, rate, maxSec) {
   const len = Math.min(buf.duration, maxSec || 1e9);
-  const off = new OfflineAudioContext(1, Math.ceil(len * rate), rate);
+  const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(len * rate)), rate);
   const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
   return (await off.startRendering()).getChannelData(0);
 }
@@ -205,33 +333,87 @@ function wav(samples, rate) {
   v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
   v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
   w(36, 'data'); v.setUint32(40, samples.length * 2, true);
-  for (let i = 0; i < samples.length; i++) {
-    const s = Math.max(-1, Math.min(1, samples[i]));
-    v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
-  }
+  for (let i = 0; i < samples.length; i++) { const s = Math.max(-1, Math.min(1, samples[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
   return new Blob([b], { type: 'audio/wav' });
 }
 async function b64(blob) {
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  const bytes = new Uint8Array(await blob.arrayBuffer()); let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(s);
 }
-// riferimento: mono 24 kHz, max 30 s
-async function preparaRiferimento(blob) {
-  return wav(await inMono(await decodifica(blob), 24000, 30), 24000);
+function concatena(parti, rate, pausaSec) {
+  const pausa = new Float32Array(Math.round(rate * pausaSec)); const seq = [];
+  parti.forEach((p, i) => { seq.push(p); if (i < parti.length - 1) seq.push(pausa); });
+  const tot = new Float32Array(seq.reduce((n, p) => n + p.length, 0)); let o = 0;
+  for (const p of seq) { tot.set(p, o); o += p.length; }
+  return tot;
 }
+function picchi(samples, n = 90) {
+  const out = [], step = Math.max(1, Math.floor(samples.length / n));
+  for (let i = 0; i < n; i++) { let m = 0; for (let j = i * step; j < Math.min(samples.length, (i + 1) * step); j += 4) m = Math.max(m, Math.abs(samples[j])); out.push(m); }
+  const max = Math.max(...out, 0.01); return out.map(x => x / max);
+}
+async function picchiDi(blob) { try { const b = await decodifica(blob); return { p: picchi(b.getChannelData(0)), d: b.duration }; } catch { return { p: [], d: 0 }; } }
+
+// ---------- lettore audio ----------
+let inRiproduzione = null;
+function lettore(blob, opt = {}) {
+  const el = document.createElement('div'); el.className = 'player' + (opt.sm ? ' sm' : '');
+  el.innerHTML = `<button class="play" aria-label="Riproduci">${ICON.play}</button><canvas></canvas><span class="t">${fmt(opt.durata)}</span>`;
+  const [btn, cv, t] = el.children; const audio = new Audio(); audio.preload = 'none';
+  let url = null, P = opt.picchi || null, dur = opt.durata || 0, raf;
+  const src = () => { if (!url) { url = URL.createObjectURL(blob); audio.src = url; } };
+  function draw() {
+    const dpr = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight; if (!w) return;
+    cv.width = w * dpr; cv.height = h * dpr; const g = cv.getContext('2d'); g.scale(dpr, dpr);
+    const cs = getComputedStyle(document.documentElement);
+    const n = Math.max(20, Math.floor(w / 4)), bw = 2.2, prog = dur ? audio.currentTime / dur : 0;
+    for (let i = 0; i < n; i++) {
+      const v = P && P.length ? P[Math.floor(i / n * P.length)] : 0.15;
+      const bh = Math.max(2, v * (h - 4)), x = i * (w / n);
+      g.fillStyle = i / n < prog ? cs.getPropertyValue('--accent') : cs.getPropertyValue('--wave');
+      g.beginPath(); g.roundRect ? g.roundRect(x, (h - bh) / 2, bw, bh, 1.2) : g.rect(x, (h - bh) / 2, bw, bh); g.fill();
+    }
+  }
+  const tick = () => { draw(); t.textContent = fmt(audio.currentTime); if (!audio.paused) raf = requestAnimationFrame(tick); };
+  btn.onclick = () => {
+    src();
+    if (audio.paused) { if (inRiproduzione && inRiproduzione !== audio) inRiproduzione.pause(); inRiproduzione = audio; audio.play(); }
+    else audio.pause();
+  };
+  audio.onplay = () => { btn.innerHTML = ICON.pause; tick(); };
+  audio.onpause = () => { btn.innerHTML = ICON.play; cancelAnimationFrame(raf); draw(); };
+  audio.onended = () => { audio.currentTime = 0; t.textContent = fmt(dur); draw(); };
+  audio.onloadedmetadata = () => { if (isFinite(audio.duration)) { dur = audio.duration; if (audio.paused) t.textContent = fmt(dur); } };
+  cv.onclick = e => { src(); const r = cv.getBoundingClientRect(); const go = () => { audio.currentTime = (e.clientX - r.left) / r.width * dur; draw(); };
+    if (dur) go(); else audio.addEventListener('loadedmetadata', go, { once: true }); };
+  new ResizeObserver(draw).observe(cv);
+  if (!P) picchiDi(blob).then(r => { P = r.p; if (!dur) { dur = r.d; t.textContent = fmt(dur); } draw(); opt.onPicchi && opt.onPicchi(r); });
+  el.play = () => btn.click();
+  return el;
+}
+
+// ---------- navigazione ----------
+function vai(v) {
+  document.querySelectorAll('.view').forEach(x => x.classList.toggle('on', x.id === 'v-' + v));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  ls.set('vista', v); if (v === 'nuova') setTimeout(() => $('nvNome').focus(), 50);
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => vai(b.dataset.v));
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) vai(g.dataset.go); });
 
 // ---------- motore ----------
 const motore = { url: ls.get('motore.url', ''), chiave: ls.get('motore.chiave', '') };
-(function leggiLink() {
-  const h = new URLSearchParams(location.hash.slice(1));
-  if (h.get('motore')) {
-    motore.url = h.get('motore').replace(/\/$/, ''); motore.chiave = h.get('chiave') || '';
-    ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave);
-    history.replaceState(null, '', location.pathname);
-  }
-})();
+(() => { const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get('motore')) { motore.url = h.get('motore').replace(/\/$/, ''); motore.chiave = h.get('chiave') || '';
+    ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave); history.replaceState(null, '', location.pathname); } })();
 let collegato = false;
+function segnaMotore(ok, testo) {
+  collegato = ok === true;
+  $('dot').className = 'dot' + (ok === true ? ' ok' : ok === false ? ' ko' : ' wait');
+  $('statoMotore').textContent = testo;
+}
 async function provaMotore() {
   $('url').value = motore.url; $('chiave').value = motore.chiave;
   if (!motore.url) { segnaMotore(false, 'Motore non collegato'); $('cardMotore').classList.remove('hidden'); return; }
@@ -239,250 +421,263 @@ async function provaMotore() {
   for (let i = 0; i < 6; i++) {
     try {
       const r = await fetch(motore.url + '/v1/health', { headers: { Authorization: 'Bearer ' + motore.chiave } });
-      if (r.ok) { segnaMotore(true, 'Motore collegato'); return; }
+      if (r.ok) { segnaMotore(true, 'Motore acceso'); $('cardMotore').classList.add('hidden'); return; }
       if (r.status === 401) { segnaMotore(false, 'Chiave sbagliata'); return; }
     } catch {}
-    await new Promise(r => setTimeout(r, 2500)); // il tunnel appena creato ci mette qualche secondo
+    await new Promise(r => setTimeout(r, 2500));
   }
-  segnaMotore(false, 'Motore spento — riavvia Colab');
-}
-function segnaMotore(ok, testo) {
-  collegato = ok === true;
-  $('dot').className = 'dot' + (ok === true ? ' ok' : ok === false ? ' ko' : '');
-  $('statoMotore').textContent = testo;
+  segnaMotore(false, 'Motore spento');
 }
 $('pillMotore').onclick = () => $('cardMotore').classList.toggle('hidden');
-$('salvaMotore').onclick = () => {
-  motore.url = $('url').value.trim().replace(/\/$/, ''); motore.chiave = $('chiave').value.trim();
-  ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave); provaMotore();
-};
+$('salvaMotore').onclick = () => { motore.url = $('url').value.trim().replace(/\/$/, ''); motore.chiave = $('chiave').value.trim();
+  ls.set('motore.url', motore.url); ls.set('motore.chiave', motore.chiave); provaMotore(); };
 
 let controller = null;
 async function tts(text, references) {
   controller = new AbortController();
-  const r = await fetch(motore.url + '/v1/tts', {
-    method: 'POST', signal: controller.signal,
+  const r = await fetch(motore.url + '/v1/tts', { method: 'POST', signal: controller.signal,
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + motore.chiave },
-    body: JSON.stringify({
-      text, references, format: 'wav', use_memory_cache: 'on',
-      temperature: +$('temp').value, top_p: +$('topp').value,
-    }),
-  });
-  if (!r.ok) {
-    let msg = r.status + ' ' + r.statusText;
-    try { msg += ' — ' + (await r.text()).slice(0, 300); } catch {}
-    throw new Error(msg);
-  }
-  return await r.blob();
+    body: JSON.stringify({ text, references, format: 'wav', use_memory_cache: 'on', temperature: +$('temp').value, top_p: +$('topp').value }) });
+  if (!r.ok) { let m = r.status + ' ' + r.statusText; try { m += ' — ' + (await r.text()).slice(0, 300); } catch {} throw new Error(m); }
+  return r.blob();
 }
 
 // ---------- voci ----------
-let voci = [];
+let voci = [], scelta = ls.get('voce.scelta', '');
 async function caricaVoci() {
   voci = (await DB.all('voci')).sort((a, b) => a.creata - b.creata);
-  const opz = '<option value="">Casuale (il modello sceglie)</option>' + voci.map(v => `<option value="${v.id}">${esc(v.nome)}</option>`).join('');
-  const scelta = ls.get('voce.scelta', '');
-  $('voce').innerHTML = opz; $('voce').value = voci.some(v => v.id === scelta) ? scelta : '';
-  document.querySelectorAll('.rigaVoce').forEach(s => { const v = s.value; s.innerHTML = opzioniDialogo(); s.value = v; });
-  $('listaVoci').innerHTML = voci.length ? '' : '<p class="empty">Nessuna voce salvata. Aggiungine una: basta un audio di 10-30 secondi.</p>';
+  if (!voci.some(v => v.id === scelta)) scelta = '';
+  $('cVoci').textContent = voci.length || '';
+  disegnaChips(); disegnaVoci();
+  document.querySelectorAll('.rigaVoce').forEach(s => { const v = s.value; s.innerHTML = opzioniDialogo(); if (v) s.value = v; });
+}
+function disegnaChips() {
+  const c = $('chips'); c.innerHTML = '';
+  const chip = (id, html) => { const b = document.createElement('button'); b.className = 'chip' + (scelta === id ? ' on' : ''); b.innerHTML = html;
+    b.onclick = () => { scelta = id; ls.set('voce.scelta', id); disegnaChips(); }; c.append(b); };
+  chip('', `<span class="av" style="background:var(--card2);color:var(--muted)">?</span>Casuale`);
+  voci.forEach(v => chip(v.id, avatar(v.nome) + esc(v.nome)));
+  const add = document.createElement('button'); add.className = 'chip add'; add.textContent = '+ Nuova voce'; add.dataset.go = 'nuova'; c.append(add);
+}
+function disegnaVoci() {
+  const L = $('listaVoci'); L.innerHTML = '';
+  if (!voci.length) { L.innerHTML = `<div class="card empty" style="grid-column:1/-1"><div class="big">Ancora nessuna voce</div>Aggiungi un audio di 20-30 secondi e il modello imparerà a imitarlo.<div style="margin-top:16px"><button class="btn primary" data-go="nuova">+ Aggiungi la prima voce</button></div></div>`; return; }
   for (const v of voci) {
-    const d = document.createElement('div'); d.className = 'item';
-    d.innerHTML = `<b>${esc(v.nome)}</b><div class="meta">${v.testo ? esc(v.testo.slice(0, 120)) : 'senza trascrizione'}</div>`;
-    const a = document.createElement('audio'); a.controls = true; a.src = URL.createObjectURL(v.audio); d.append(a);
-    const act = document.createElement('div'); act.className = 'actions';
-    const del = document.createElement('button'); del.className = 'small danger'; del.textContent = 'Elimina';
-    del.onclick = async () => { if (confirm(`Eliminare la voce "${v.nome}"?`)) { await DB.del('voci', v.id); caricaVoci(); } };
-    act.append(del); d.append(act); $('listaVoci').append(d);
+    const d = document.createElement('div'); d.className = 'vcard';
+    const info = [v.durata ? fmt(v.durata) : '', v.clip > 1 ? v.clip + ' audio uniti' : '', v.testo ? 'con trascrizione' : 'senza trascrizione'].filter(Boolean).join(' · ');
+    d.innerHTML = `<div class="top">${avatar(v.nome, 'lg')}<div style="min-width:0"><div class="nm">${esc(v.nome)}</div><div class="info">${info}</div></div></div>${v.testo ? `<div class="tr">“${esc(v.testo)}”</div>` : ''}`;
+    d.append(lettore(v.audio, { sm: true, picchi: v.picchi, durata: v.durata, onPicchi: r => { v.picchi = r.p; v.durata = r.d; DB.put('voci', v); } }));
+    const a = document.createElement('div'); a.className = 'row';
+    const usa = document.createElement('button'); usa.className = 'btn sm'; usa.textContent = 'Usa questa voce';
+    usa.onclick = () => { scelta = v.id; ls.set('voce.scelta', v.id); disegnaChips(); impostaModo('testo'); vai('crea'); };
+    const del = document.createElement('button'); del.className = 'btn sm ghost danger'; del.innerHTML = ICON.del + 'Elimina';
+    del.onclick = async () => { if (confirm(`Eliminare la voce "${v.nome}"?`)) { await DB.del('voci', v.id); caricaVoci(); toast('Voce eliminata'); } };
+    a.append(usa, del); d.append(a); L.append(d);
   }
 }
-$('voce').onchange = () => ls.set('voce.scelta', $('voce').value);
+async function riferimento(v) { return { audio: await b64(v.audio), text: v.testo || '' }; }
 
-let nvBlob = null, rec = null;
-function anteprima(blob) {
-  nvBlob = blob;
-  $('nvAnteprima').innerHTML = ''; const a = document.createElement('audio'); a.controls = true; a.src = URL.createObjectURL(blob);
-  $('nvAnteprima').append(a);
+// ---------- aggiungi voce ----------
+const MAX = 45, IDEALE = 30, RATE_REF = 24000;
+let clips = [];
+async function aggiungiClip(blob, nome) {
+  try {
+    const buf = await decodifica(blob);
+    clips.push({ id: uid(), blob, nome, samples: await inMono(buf, RATE_REF), durata: buf.duration, testo: '' });
+    disegnaClips();
+  } catch (e) { $('nvStato').textContent = `Non riesco a leggere "${nome}".`; $('nvStato').className = 'status err'; }
 }
-$('nvFile').onchange = e => { if (e.target.files[0]) anteprima(e.target.files[0]); };
+function durataTot() { return clips.reduce((n, c) => n + c.durata, 0) + Math.max(0, clips.length - 1) * 0.3; }
+function disegnaClips() {
+  const C = $('clips'); C.innerHTML = '';
+  clips.forEach((c, i) => {
+    const d = document.createElement('div'); d.className = 'clip';
+    d.innerHTML = `<div class="row"><span class="n">${i + 1}. ${esc(c.nome)} · ${fmt(c.durata)}</span><span class="grow"></span></div>`;
+    const del = document.createElement('button'); del.className = 'btn icon ghost danger'; del.innerHTML = ICON.del; del.title = 'Togli';
+    del.onclick = () => { clips = clips.filter(x => x !== c); disegnaClips(); };
+    d.firstChild.append(del);
+    d.append(lettore(c.blob, { sm: true, durata: c.durata }));
+    const ta = document.createElement('textarea'); ta.placeholder = 'Cosa dice questo audio (parola per parola)'; ta.value = c.testo; ta.style.marginTop = '10px';
+    ta.oninput = () => c.testo = ta.value; d.append(ta); C.append(d);
+  });
+  const tot = durataTot();
+  $('durBox').classList.toggle('hidden', !clips.length);
+  $('durTxt').textContent = `${fmt(tot)} ${tot > MAX ? '— troppo lungo, togli un audio' : tot < 8 ? '— un po\' corto, meglio almeno 10-20 s' : tot > IDEALE ? '— va bene, ma oltre 30 s rallenta' : '— perfetto'}`;
+  $('meter').classList.toggle('over', tot > MAX);
+  $('meter').firstChild.style.width = Math.min(100, tot / MAX * 100) + '%';
+}
+$('nvFile').onchange = async e => { for (const f of e.target.files) await aggiungiClip(f, f.name); e.target.value = ''; };
+const drop = $('drop');
+['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', async e => { for (const f of e.dataTransfer.files) await aggiungiClip(f, f.name); });
+let rec = null, recT0 = 0, recTimer;
 $('nvRec').onclick = async () => {
   if (rec && rec.state === 'recording') { rec.stop(); return; }
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const parti = []; rec = new MediaRecorder(stream);
-    rec.ondataavailable = e => parti.push(e.data);
-    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); anteprima(new Blob(parti, { type: rec.mimeType }));
-      $('nvRec').textContent = '🎙 Registra'; $('nvRec').classList.remove('rec'); };
-    rec.start(); $('nvRec').textContent = '■ Ferma registrazione'; $('nvRec').classList.add('rec');
-  } catch (e) { $('nvStato').textContent = 'Microfono non disponibile: ' + e.message; }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); const parti = [];
+    rec = new MediaRecorder(stream); rec.ondataavailable = e => parti.push(e.data);
+    rec.onstop = () => { stream.getTracks().forEach(t => t.stop()); clearInterval(recTimer);
+      $('nvRec').classList.remove('rec-on'); $('nvRec').lastChild.textContent = 'Registra';
+      aggiungiClip(new Blob(parti, { type: rec.mimeType }), 'Registrazione ' + new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })); };
+    rec.start(); recT0 = Date.now(); $('nvRec').classList.add('rec-on');
+    recTimer = setInterval(() => $('nvRec').lastChild.textContent = 'Ferma · ' + fmt((Date.now() - recT0) / 1000), 250);
+  } catch (e) { $('nvStato').textContent = 'Microfono non disponibile: ' + e.message; $('nvStato').className = 'status err'; }
 };
 $('nvSalva').onclick = async () => {
-  const nome = $('nvNome').value.trim();
-  if (!nome || !nvBlob) { $('nvStato').textContent = 'Servono un nome e un audio.'; return; }
-  try {
-    $('nvStato').textContent = 'Preparo l\'audio…';
-    const audio = await preparaRiferimento(nvBlob);
-    await DB.put('voci', { id: uid(), nome, testo: $('nvTesto').value.trim(), audio, creata: Date.now() });
-    $('nvNome').value = ''; $('nvTesto').value = ''; $('nvFile').value = ''; $('nvAnteprima').innerHTML = ''; nvBlob = null;
-    $('nvStato').textContent = 'Voce salvata ✅'; caricaVoci();
-  } catch (e) { $('nvStato').textContent = 'Non riesco a leggere questo audio: ' + e.message; }
+  const nome = $('nvNome').value.trim(), st = $('nvStato'); st.className = 'status';
+  if (!nome) { st.textContent = 'Dai un nome alla voce.'; st.className = 'status err'; return; }
+  if (!clips.length) { st.textContent = 'Aggiungi almeno un audio.'; st.className = 'status err'; return; }
+  if (durataTot() > MAX) { st.textContent = `In tutto supera ${MAX} secondi: togli un audio.`; st.className = 'status err'; return; }
+  const tutteTrascritte = clips.every(c => c.testo.trim());
+  if (!tutteTrascritte && clips.some(c => c.testo.trim()) && !confirm('Alcuni audio non hanno la trascrizione: in quel caso viene ignorata per tutti. Salvare lo stesso?')) return;
+  const samples = concatena(clips.map(c => c.samples), RATE_REF, 0.3);
+  const audio = wav(samples, RATE_REF);
+  await DB.put('voci', { id: uid(), nome, testo: tutteTrascritte ? clips.map(c => c.testo.trim()).join(' ') : '', audio,
+    creata: Date.now(), clip: clips.length, durata: samples.length / RATE_REF, picchi: picchi(samples) });
+  clips = []; disegnaClips(); $('nvNome').value = ''; st.textContent = '';
+  await caricaVoci(); toast(`Voce "${nome}" salvata`); vai('voci');
 };
-async function riferimento(v) { return { audio: await b64(v.audio), text: v.testo || '' }; }
 
 // ---------- emozioni ----------
-const TAG = [['ride', 'laughing'], ['ridacchia', 'chuckling'], ['sussurra', 'whispering'], ['urla', 'shouting'],
-  ['felice', 'happy'], ['emozionato', 'excited'], ['triste', 'sad'], ['arrabbiato', 'angry'], ['sarcastico', 'sarcastic'],
-  ['calmo', 'calm'], ['sospira', 'sighing'], ['respiro', 'breath'], ['pausa', 'pause'], ['piange', 'crying']];
+const TAG = [['ride', 'laughing'], ['ridacchia', 'chuckling'], ['sussurra', 'whispering'], ['urla', 'shouting'], ['felice', 'happy'],
+  ['emozionato', 'excited'], ['triste', 'sad'], ['arrabbiato', 'angry'], ['sarcastico', 'sarcastic'], ['calmo', 'calm'],
+  ['sospira', 'sighing'], ['respiro', 'breath'], ['pausa', 'pause'], ['piange', 'crying']];
 let ultimoCampo = null;
-document.addEventListener('focusin', e => { if (e.target.tagName === 'TEXTAREA' && e.target.id !== 'nvTesto') ultimoCampo = e.target; });
+document.addEventListener('focusin', e => { if (e.target.tagName === 'TEXTAREA' && (e.target.id === 'testo' || e.target.closest('#righe'))) ultimoCampo = e.target; });
 TAG.forEach(([it, en]) => {
-  const b = document.createElement('button'); b.className = 'tag'; b.textContent = it; b.title = `[${en}]`;
+  const b = document.createElement('button'); b.className = 'tag'; b.textContent = it; b.title = `inserisce [${en}]`;
   b.onmousedown = e => e.preventDefault();
-  b.onclick = () => {
-    const t = ultimoCampo || $('testo'); const s = t.selectionStart ?? t.value.length, e = t.selectionEnd ?? s;
-    const ins = `[${en}] `; t.value = t.value.slice(0, s) + ins + t.value.slice(e);
-    t.focus(); t.selectionStart = t.selectionEnd = s + ins.length;
-  };
+  b.onclick = () => { const t = (ultimoCampo && document.contains(ultimoCampo)) ? ultimoCampo : $('testo');
+    const s = t.selectionStart ?? t.value.length, e = t.selectionEnd ?? s, ins = `[${en}] `;
+    t.value = t.value.slice(0, s) + ins + t.value.slice(e); t.focus(); t.selectionStart = t.selectionEnd = s + ins.length; t.dispatchEvent(new Event('input')); };
   $('tags').append(b);
 });
 
 // ---------- dialogo ----------
-const opzioniDialogo = () => voci.length ? voci.map(v => `<option value="${v.id}">${esc(v.nome)}</option>`).join('') : '<option value="">(aggiungi prima delle voci)</option>';
+const opzioniDialogo = () => voci.length ? voci.map(v => `<option value="${v.id}">${esc(v.nome)}</option>`).join('') : '<option value="">(prima aggiungi delle voci)</option>';
 function aggiungiRiga(voceId = '', testo = '') {
   const d = document.createElement('div'); d.className = 'line';
-  d.innerHTML = `<select class="rigaVoce">${opzioniDialogo()}</select><textarea placeholder="Battuta…"></textarea><button class="small danger" title="Togli">✕</button>`;
+  d.innerHTML = `<select class="rigaVoce">${opzioniDialogo()}</select><textarea placeholder="Battuta…"></textarea><button class="btn icon ghost danger" title="Togli">${ICON.del}</button>`;
   if (voceId) d.querySelector('select').value = voceId;
-  d.querySelector('textarea').value = testo;
-  d.querySelector('button').onclick = () => d.remove();
-  $('righe').append(d);
+  d.querySelector('textarea').value = testo; d.querySelector('button').onclick = () => d.remove(); $('righe').append(d);
 }
-$('aggiungiRiga').onclick = () => {
-  const ultime = [...document.querySelectorAll('.rigaVoce')];
-  // alterna automaticamente le voci
-  let id = ''; if (voci.length > 1 && ultime.length) { const i = voci.findIndex(v => v.id === ultime.at(-1).value); id = voci[(i + 1) % voci.length].id; }
-  aggiungiRiga(id);
-};
+$('aggiungiRiga').onclick = () => { const u = [...document.querySelectorAll('.rigaVoce')]; let id = '';
+  if (voci.length > 1 && u.length) { const i = voci.findIndex(v => v.id === u.at(-1).value); id = voci[(i + 1) % voci.length].id; }
+  aggiungiRiga(id); };
 let modo = 'testo';
-document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
-  modo = b.dataset.tab;
-  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
-  $('tabTesto').classList.toggle('hidden', modo !== 'testo');
-  $('tabDialogo').classList.toggle('hidden', modo !== 'dialogo');
-  if (modo === 'dialogo' && !$('righe').children.length) { aggiungiRiga(); $('aggiungiRiga').click(); }
-});
+function impostaModo(m) {
+  modo = m; document.querySelectorAll('#modo button').forEach(x => x.classList.toggle('on', x.dataset.m === m));
+  $('tabTesto').classList.toggle('hidden', m !== 'testo'); $('tabDialogo').classList.toggle('hidden', m !== 'dialogo');
+  if (m === 'dialogo' && !$('righe').children.length) { aggiungiRiga(); $('aggiungiRiga').click(); }
+}
+document.querySelectorAll('#modo button').forEach(b => b.onclick = () => impostaModo(b.dataset.m));
 
 // ---------- generazione ----------
-// testi lunghi: pezzi da ~250 caratteri (il tunnel chiude le richieste oltre ~100 s)
 function spezza(t, max = 250) {
-  const frasi = t.replace(/\s+/g, ' ').trim().match(/[^.!?…]+[.!?…]*["»”]?\s*/g) || [t];
-  const out = []; let cur = '';
+  const frasi = t.replace(/\s+/g, ' ').trim().match(/[^.!?…]+[.!?…]*["»”]?\s*/g) || [t]; const out = []; let cur = '';
   for (const f of frasi) {
     if ((cur + f).length > max && cur) { out.push(cur.trim()); cur = ''; }
-    if (f.length > max) { for (const p of f.match(new RegExp(`.{1,${max}}(\\s|$)`, 'g'))) out.push(p.trim()); }
-    else cur += f;
+    if (f.length > max) { for (const p of f.match(new RegExp(`.{1,${max}}(\\s|$)`, 'g'))) out.push(p.trim()); } else cur += f;
   }
-  if (cur.trim()) out.push(cur.trim());
-  return out;
+  if (cur.trim()) out.push(cur.trim()); return out;
 }
-function stato(t, err) { $('stato').textContent = t; $('stato').className = 'status' + (err ? ' err' : ''); }
-
+function stato(t, tipo) { $('stato').innerHTML = (tipo === 'busy' ? '<span class="spinner"></span>' : '') + esc(t); $('stato').className = 'status' + (tipo === 'err' ? ' err' : ''); }
+function progresso(f) { $('prog').style.display = f == null ? 'none' : 'block'; $('prog').firstChild.style.width = ((f || 0) * 100) + '%'; }
 async function unisci(blobs) {
-  const rate = 44100, pausa = new Float32Array(Math.round(rate * 0.25)); const parti = [];
-  for (const [i, b] of blobs.entries()) { parti.push(await inMono(await decodifica(b), rate)); if (i < blobs.length - 1) parti.push(pausa); }
-  const tot = new Float32Array(parti.reduce((n, p) => n + p.length, 0)); let o = 0;
-  for (const p of parti) { tot.set(p, o); o += p.length; }
-  return wav(tot, rate);
+  const rate = 44100, parti = [];
+  for (const b of blobs) parti.push(await inMono(await decodifica(b), rate));
+  return wav(concatena(parti, rate, 0.25), rate);
 }
-
 $('genera').onclick = async () => {
-  if (!collegato) { await provaMotore(); if (!collegato) { stato('Il motore non risponde: avvia il notebook su Colab e apri il link che ti dà.', true); $('cardMotore').classList.remove('hidden'); return; } }
-  $('genera').disabled = true; $('ferma').classList.remove('hidden'); $('risultato').innerHTML = '';
-  const t0 = Date.now();
+  if (!collegato) { await provaMotore(); if (!collegato) { stato('Il motore è spento: avvia il notebook su Colab e apri il link che ti dà.', 'err'); $('cardMotore').classList.remove('hidden'); return; } }
+  $('genera').disabled = true; $('ferma').classList.remove('hidden'); $('risultato').classList.remove('on'); const t0 = Date.now();
   try {
-    let blobs = [], descr, nomeVoce, testoTot;
+    let blobs = [], nomeVoce, testoTot;
     if (modo === 'testo') {
       testoTot = $('testo').value.trim(); if (!testoTot) throw new Error('Scrivi un testo.');
-      const v = voci.find(x => x.id === $('voce').value); nomeVoce = v ? v.nome : 'Casuale';
-      let refs = v ? [await riferimento(v)] : [];
-      const pezzi = spezza(testoTot);
+      const v = voci.find(x => x.id === scelta); nomeVoce = v ? v.nome : 'Casuale';
+      let refs = v ? [await riferimento(v)] : []; const pezzi = spezza(testoTot);
       for (const [i, p] of pezzi.entries()) {
-        stato(pezzi.length > 1 ? `Genero il pezzo ${i + 1} di ${pezzi.length}…` : 'Genero…');
+        stato(pezzi.length > 1 ? `Genero il pezzo ${i + 1} di ${pezzi.length}…` : 'Genero…', 'busy'); progresso(i / pezzi.length);
         const b = await tts(p, refs); blobs.push(b);
-        // senza voce scelta: il primo pezzo fa da voce per gli altri, così non cambia a metà
-        if (!v && i === 0 && pezzi.length > 1) refs = [{ audio: await b64(await preparaRiferimento(b)), text: p }];
+        if (!v && i === 0 && pezzi.length > 1) refs = [{ audio: await b64(wav(await inMono(await decodifica(b), RATE_REF, 30), RATE_REF)), text: p }];
       }
     } else {
       const righe = [...$('righe').children].map(d => ({ id: d.querySelector('select').value, t: d.querySelector('textarea').value.trim() })).filter(r => r.t);
       if (!righe.length) throw new Error('Scrivi almeno una battuta.');
       if (righe.some(r => !voci.find(v => v.id === r.id))) throw new Error('Ogni battuta deve avere una voce salvata.');
-      const usate = [...new Set(righe.map(r => r.id))];
-      const refs = [];
+      const usate = [...new Set(righe.map(r => r.id))], refs = [];
       for (const [n, id] of usate.entries()) { const r = await riferimento(voci.find(v => v.id === id)); r.speaker = n; refs.push(r); }
-      // gruppi di battute da ~250 caratteri, ogni gruppo con tutte le voci
       const gruppi = []; let g = [];
       for (const r of righe) { if (g.length && (g.map(x => x.t).join(' ') + r.t).length > 250) { gruppi.push(g); g = []; } g.push(r); }
       if (g.length) gruppi.push(g);
       for (const [i, gr] of gruppi.entries()) {
-        stato(gruppi.length > 1 ? `Genero la parte ${i + 1} di ${gruppi.length}…` : 'Genero il dialogo…');
+        stato(gruppi.length > 1 ? `Genero la parte ${i + 1} di ${gruppi.length}…` : 'Genero il dialogo…', 'busy'); progresso(i / gruppi.length);
         blobs.push(await tts(gr.map(r => `<|speaker:${usate.indexOf(r.id)}|>${r.t}`).join('\n'), refs));
       }
       testoTot = righe.map(r => `${voci.find(v => v.id === r.id).nome}: ${r.t}`).join('\n');
-      nomeVoce = usate.map(id => voci.find(v => v.id === id).nome).join(', ');
+      nomeVoce = usate.map(id => voci.find(v => v.id === id).nome).join(' & ');
     }
-    stato('Unisco…');
+    stato('Unisco…', 'busy'); progresso(1);
     const audio = blobs.length === 1 ? blobs[0] : await unisci(blobs);
-    const sec = ((Date.now() - t0) / 1000).toFixed(0);
-    const voce = { id: uid(), data: Date.now(), testo: testoTot, voce: nomeVoce, audio, modo };
+    const pk = await picchiDi(audio);
+    const voce = { id: uid(), data: Date.now(), testo: testoTot, voce: nomeVoce, audio, modo, picchi: pk.p, durata: pk.d };
     await DB.put('storia', voce);
-    stato(`Fatto in ${sec} s ✅`);
-    mostraRisultato(voce); caricaStoria();
+    stato(`Pronto in ${((Date.now() - t0) / 1000).toFixed(0)} s`); mostraRisultato(voce); caricaStoria();
   } catch (e) {
-    stato(e.name === 'AbortError' ? 'Fermato.' : 'Errore: ' + e.message, e.name !== 'AbortError');
-    if (e instanceof TypeError) { segnaMotore(false, 'Motore non raggiungibile'); }
-  } finally {
-    $('genera').disabled = false; $('ferma').classList.add('hidden'); controller = null;
-  }
+    stato(e.name === 'AbortError' ? 'Fermato.' : 'Errore: ' + e.message, e.name === 'AbortError' ? '' : 'err');
+    if (e instanceof TypeError) segnaMotore(false, 'Motore non raggiungibile');
+  } finally { $('genera').disabled = false; $('ferma').classList.add('hidden'); controller = null; progresso(null); }
 };
 $('ferma').onclick = () => controller && controller.abort();
 
-function nomeFile(v) {
-  const d = new Date(v.data);
-  return `voce_${d.toISOString().slice(0, 16).replace(/[-:T]/g, '')}_${v.testo.slice(0, 24).replace(/[^\p{L}\p{N}]+/gu, '_')}.wav`;
-}
+function nomeFile(v) { return `voce_${new Date(v.data).toISOString().slice(0, 16).replace(/[-:T]/g, '')}_${v.testo.slice(0, 24).replace(/[^\p{L}\p{N}]+/gu, '_')}.wav`; }
 function scarica(v) { const a = document.createElement('a'); a.href = URL.createObjectURL(v.audio); a.download = nomeFile(v); a.click(); }
 function mostraRisultato(v) {
-  const a = document.createElement('audio'); a.controls = true; a.autoplay = true; a.src = URL.createObjectURL(v.audio);
-  const b = document.createElement('button'); b.textContent = '⬇ Scarica'; b.onclick = () => scarica(v);
-  const act = document.createElement('div'); act.className = 'actions'; act.append(b);
-  $('risultato').replaceChildren(a, act);
+  const R = $('risultato'); R.innerHTML = ''; const p = lettore(v.audio, { picchi: v.picchi, durata: v.durata });
+  const row = document.createElement('div'); row.className = 'row'; row.style.marginTop = '12px';
+  const dl = document.createElement('button'); dl.className = 'btn sm'; dl.innerHTML = ICON.dl + 'Scarica'; dl.onclick = () => scarica(v);
+  const st = document.createElement('button'); st.className = 'btn sm ghost'; st.textContent = 'Vai alla cronologia'; st.dataset.go = 'storia';
+  row.append(dl, st); R.append(p, row); R.classList.add('on'); p.play();
 }
 
 // ---------- cronologia ----------
-async function caricaStoria() {
-  const s = (await DB.all('storia')).sort((a, b) => b.data - a.data);
-  $('cronologia').innerHTML = s.length ? '' : '<p class="empty">Qui finiscono gli audio che generi, anche dopo che Colab si è spento.</p>';
-  for (const v of s) {
-    const d = document.createElement('div'); d.className = 'item';
-    d.innerHTML = `<div class="meta">${new Date(v.data).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })} · ${esc(v.voce || '')}</div><div class="txt">${esc(v.testo.length > 220 ? v.testo.slice(0, 220) + '…' : v.testo)}</div>`;
-    const a = document.createElement('audio'); a.controls = true; a.preload = 'none'; a.src = URL.createObjectURL(v.audio); d.append(a);
-    const act = document.createElement('div'); act.className = 'actions';
-    const dl = document.createElement('button'); dl.className = 'small'; dl.textContent = '⬇ Scarica'; dl.onclick = () => scarica(v);
-    const re = document.createElement('button'); re.className = 'small'; re.textContent = 'Riusa testo';
-    re.onclick = () => { if (v.modo === 'dialogo') return; document.querySelector('[data-tab=testo]').click(); $('testo').value = v.testo; window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    const del = document.createElement('button'); del.className = 'small danger'; del.textContent = 'Elimina';
-    del.onclick = async () => { await DB.del('storia', v.id); caricaStoria(); };
-    act.append(dl); if (v.modo !== 'dialogo') act.append(re); act.append(del); d.append(act); $('cronologia').append(d);
+let storia = [];
+async function caricaStoria() { storia = (await DB.all('storia')).sort((a, b) => b.data - a.data); $('cStoria').textContent = storia.length || ''; disegnaStoria(); }
+function disegnaStoria() {
+  const C = $('cronologia'), q = $('cerca').value.trim().toLowerCase(); C.innerHTML = '';
+  const lista = q ? storia.filter(v => (v.testo + ' ' + v.voce).toLowerCase().includes(q)) : storia;
+  if (!storia.length) { C.innerHTML = `<div class="card empty"><div class="big">Ancora niente qui</div>Gli audio che generi finiscono qui, e restano anche quando Colab si spegne.<div style="margin-top:16px"><button class="btn" data-go="crea">Vai a Crea</button></div></div>`; return; }
+  if (!lista.length) { C.innerHTML = `<div class="empty">Nessun risultato per “${esc(q)}”.</div>`; return; }
+  for (const v of lista) {
+    const d = document.createElement('div'); d.className = 'hitem';
+    const nomi = (v.voce || 'Casuale').split(' & ');
+    d.innerHTML = `<div class="head">${nomi.map(n => n === 'Casuale' ? '<span class="av" style="background:var(--card2);color:var(--muted)">?</span>' : avatar(n)).join('')}<b>${esc(v.voce || 'Casuale')}</b>${v.modo === 'dialogo' ? '<span class="badge">dialogo</span>' : ''}<span class="grow"></span><span class="when">${new Date(v.data).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></div>`;
+    const tx = document.createElement('p'); tx.className = 'txt' + (v.testo.length > 180 ? ' clamp' : ''); tx.textContent = v.testo;
+    tx.onclick = () => tx.classList.remove('clamp'); d.append(tx);
+    d.append(lettore(v.audio, { sm: true, picchi: v.picchi, durata: v.durata, onPicchi: r => { v.picchi = r.p; v.durata = r.d; DB.put('storia', v); } }));
+    const a = document.createElement('div'); a.className = 'acts';
+    const dl = document.createElement('button'); dl.className = 'btn sm'; dl.innerHTML = ICON.dl + 'Scarica'; dl.onclick = () => scarica(v); a.append(dl);
+    if (v.modo !== 'dialogo') { const re = document.createElement('button'); re.className = 'btn sm ghost'; re.textContent = 'Riusa testo';
+      re.onclick = () => { impostaModo('testo'); $('testo').value = v.testo; $('testo').dispatchEvent(new Event('input')); vai('crea'); }; a.append(re); }
+    const del = document.createElement('button'); del.className = 'btn sm ghost danger'; del.innerHTML = ICON.del + 'Elimina';
+    del.onclick = async () => { await DB.del('storia', v.id); caricaStoria(); toast('Eliminato'); }; a.append(del);
+    d.append(a); C.append(d);
   }
 }
+$('cerca').oninput = disegnaStoria;
 
-// ---------- impostazioni ----------
+// ---------- impostazioni e avvio ----------
 for (const k of ['temp', 'topp']) {
   $(k).value = ls.get('imp.' + k, $(k).value);
-  const show = () => { $(k + 'V').textContent = (+$(k).value).toFixed(2); ls.set('imp.' + k, $(k).value); };
+  const show = () => { $(k + 'V').textContent = (+$(k).value).toFixed(2).replace('.', ','); ls.set('imp.' + k, $(k).value); };
   $(k).oninput = show; show();
 }
 $('testo').value = ls.get('bozza', '');
-$('testo').oninput = () => ls.set('bozza', $('testo').value);
-
+const conta = () => { const n = $('testo').value.length; $('nCar').textContent = n ? n + ' caratteri' : ''; ls.set('bozza', $('testo').value); };
+$('testo').oninput = conta; conta();
+vai(ls.get('vista', 'crea'));
 caricaVoci(); caricaStoria(); provaMotore();
 </script>
 </body>
