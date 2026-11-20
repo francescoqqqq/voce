@@ -129,6 +129,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .vcard .top{display:flex;gap:12px;align-items:center}
 .vcard .nm{font-weight:600;font-size:16px}
 .vcard .info{font-size:13px;color:var(--muted)}
+.warn{font-size:13px;color:var(--warn);background:rgba(239,138,104,.08);border-radius:10px;padding:8px 10px}
 .vcard .tr{font-size:13.5px;color:var(--muted);font-style:italic;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .hitem{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
 .hitem .head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -201,6 +202,7 @@ a{color:var(--accent)}
       <div id="tabTesto">
         <div class="lbl">Voce</div>
         <div class="chips" id="chips"></div>
+        <p class="hint" id="hintCasuale">Con "Casuale" l'accento spesso non è italiano: per una pronuncia naturale usa una voce italiana salvata, con la trascrizione.</p>
         <div class="lbl">Testo <span id="nCar" style="text-transform:none;letter-spacing:0;font-weight:500"></span></div>
         <textarea id="testo" placeholder="Scrivi qui quello che vuoi far dire…"></textarea>
       </div>
@@ -437,7 +439,7 @@ async function tts(text, references) {
   controller = new AbortController();
   const r = await fetch(motore.url + '/v1/tts', { method: 'POST', signal: controller.signal,
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + motore.chiave },
-    body: JSON.stringify({ text, references, format: 'wav', use_memory_cache: 'on', temperature: +$('temp').value, top_p: +$('topp').value }) });
+    body: JSON.stringify({ text, references, format: 'wav', use_memory_cache: 'on', normalize: false, chunk_length: 300, temperature: +$('temp').value, top_p: +$('topp').value }) });
   if (!r.ok) { let m = r.status + ' ' + r.statusText; try { m += ' — ' + (await r.text()).slice(0, 300); } catch {} throw new Error(m); }
   return r.blob();
 }
@@ -452,7 +454,7 @@ async function caricaVoci() {
   document.querySelectorAll('.rigaVoce').forEach(s => { const v = s.value; s.innerHTML = opzioniDialogo(); if (v) s.value = v; });
 }
 function disegnaChips() {
-  const c = $('chips'); c.innerHTML = '';
+  const c = $('chips'); c.innerHTML = ''; $('hintCasuale').classList.toggle('hidden', scelta !== '');
   const chip = (id, html) => { const b = document.createElement('button'); b.className = 'chip' + (scelta === id ? ' on' : ''); b.innerHTML = html;
     b.onclick = () => { scelta = id; ls.set('voce.scelta', id); disegnaChips(); }; c.append(b); };
   chip('', `<span class="av" style="background:var(--card2);color:var(--muted)">?</span>Casuale`);
@@ -465,7 +467,8 @@ function disegnaVoci() {
   for (const v of voci) {
     const d = document.createElement('div'); d.className = 'vcard';
     const info = [v.durata ? fmt(v.durata) : '', v.clip > 1 ? v.clip + ' audio uniti' : '', v.testo ? 'con trascrizione' : 'senza trascrizione'].filter(Boolean).join(' · ');
-    d.innerHTML = `<div class="top">${avatar(v.nome, 'lg')}<div style="min-width:0"><div class="nm">${esc(v.nome)}</div><div class="info">${info}</div></div></div>${v.testo ? `<div class="tr">“${esc(v.testo)}”</div>` : ''}`;
+    const vecchia = v.rate !== 44100;
+    d.innerHTML = `<div class="top">${avatar(v.nome, 'lg')}<div style="min-width:0"><div class="nm">${esc(v.nome)}</div><div class="info">${info}</div></div></div>${v.testo ? `<div class="tr">“${esc(v.testo)}”</div>` : ''}${vecchia ? '<div class="warn">Salvata con la versione vecchia (qualità ridotta): eliminala e ricaricala.</div>' : !v.testo ? '<div class="warn">Senza trascrizione l\'accento italiano viene peggio: conviene ricaricarla scrivendo cosa dice.</div>' : ''}`;
     d.append(lettore(v.audio, { sm: true, picchi: v.picchi, durata: v.durata, onPicchi: r => { v.picchi = r.p; v.durata = r.d; DB.put('voci', v); } }));
     const a = document.createElement('div'); a.className = 'row';
     const usa = document.createElement('button'); usa.className = 'btn sm'; usa.textContent = 'Usa questa voce';
@@ -478,7 +481,7 @@ function disegnaVoci() {
 async function riferimento(v) { return { audio: await b64(v.audio), text: v.testo || '' }; }
 
 // ---------- aggiungi voce ----------
-const MAX = 45, IDEALE = 30, RATE_REF = 24000;
+const MAX = 45, IDEALE = 30, RATE_REF = 44100;
 let clips = [];
 async function aggiungiClip(blob, nome) {
   try {
@@ -534,7 +537,7 @@ $('nvSalva').onclick = async () => {
   const samples = concatena(clips.map(c => c.samples), RATE_REF, 0.3);
   const audio = wav(samples, RATE_REF);
   await DB.put('voci', { id: uid(), nome, testo: tutteTrascritte ? clips.map(c => c.testo.trim()).join(' ') : '', audio,
-    creata: Date.now(), clip: clips.length, durata: samples.length / RATE_REF, picchi: picchi(samples) });
+    creata: Date.now(), clip: clips.length, durata: samples.length / RATE_REF, picchi: picchi(samples), rate: RATE_REF });
   clips = []; disegnaClips(); $('nvNome').value = ''; st.textContent = '';
   await caricaVoci(); toast(`Voce "${nome}" salvata`); vai('voci');
 };
@@ -574,7 +577,7 @@ function impostaModo(m) {
 document.querySelectorAll('#modo button').forEach(b => b.onclick = () => impostaModo(b.dataset.m));
 
 // ---------- generazione ----------
-function spezza(t, max = 250) {
+function spezza(t, max = 400) {
   const frasi = t.replace(/\s+/g, ' ').trim().match(/[^.!?…]+[.!?…]*["»”]?\s*/g) || [t]; const out = []; let cur = '';
   for (const f of frasi) {
     if ((cur + f).length > max && cur) { out.push(cur.trim()); cur = ''; }
@@ -610,7 +613,7 @@ $('genera').onclick = async () => {
       const usate = [...new Set(righe.map(r => r.id))], refs = [];
       for (const [n, id] of usate.entries()) { const r = await riferimento(voci.find(v => v.id === id)); r.speaker = n; refs.push(r); }
       const gruppi = []; let g = [];
-      for (const r of righe) { if (g.length && (g.map(x => x.t).join(' ') + r.t).length > 250) { gruppi.push(g); g = []; } g.push(r); }
+      for (const r of righe) { if (g.length && (g.map(x => x.t).join(' ') + r.t).length > 400) { gruppi.push(g); g = []; } g.push(r); }
       if (g.length) gruppi.push(g);
       for (const [i, gr] of gruppi.entries()) {
         stato(gruppi.length > 1 ? `Genero la parte ${i + 1} di ${gruppi.length}…` : 'Genero il dialogo…', 'busy'); progresso(i / gruppi.length);
